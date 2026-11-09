@@ -8,11 +8,7 @@ Autonomous navigation development depends on repeatable access to a complete rob
 
 This project addresses that constraint with a virtual workflow for field mapping, trajectory simulation, and controller stress testing. **AdvantageScope** is the primary environment for 3D simulation, `Field2d` trajectory visualization, and high-frequency closed-loop telemetry analysis.
 
-The repository includes field-mapping examples and simulation recordings:
-
-![AdvantageScope field visualization](Different%20Field.png)
-
-![Calibrated field obstacle perimeter](FRC%20Rebuilt%20Obstacle%20map%20perimeter%20%231.png)
+The figures and recordings below are embedded in this page so the workflow can be followed without leaving the README.
 
 ## 2. System Architecture
 
@@ -44,7 +40,31 @@ $$
 
 Vertical and horizontal segments are represented directly rather than dividing by zero.
 
-![OpenCV field-image mapping workflow](Mapping%20Vision%20part%201.png)
+#### Mapping workflow
+
+1. **Inspect the field image and identify obstacle colors.** The notebook uses OpenCV to isolate selected color regions and detect obstacle contours.
+
+   ![OpenCV color selection on the field image](Mapping%20Vision%20part%201.png)
+
+2. **Calibrate from a known obstacle.** Select the reference obstacle and confirm it with `P`; the notebook compares its geometric proportions with the obstacle data and computes a uniform meters-per-pixel scale. If there are multiple geometrically similar candidates, the notebook asks for the field/alliance selection (`B` or `R`) to disambiguate them.
+
+   ![Obstacle reference and scale calibration](Mapping%20Vision%20part%202.png)
+
+3. **Map additional obstacles.** Select another obstacle of the calibrated type and press `P` to extract and convert its perimeter to field coordinates.
+
+   ![Obstacle contour extraction and mapping](Mapping%20Vision%20part%203.png)
+
+4. **Review the generated geometry.** The calibrated line-segment records are written to the obstacle map file. The repository includes examples of the resulting field perimeter:
+
+   ![Rebuilt field obstacle perimeter, view 1](FRC%20Rebuilt%20Obstacle%20map%20perimeter%20%23%201.png)
+
+   ![Rebuilt field obstacle perimeter, view 2](FRC%20Rebuilt%20Obstacle%20map%20perimeter%20%232.png)
+
+   ![Rebuilt field obstacle perimeter, view 3](FRC%20Rebuilt%20Obstacle%20map%20perimeter%20%233.png)
+
+   ![Rebuilt field obstacle perimeter, view 4](FRC%20rebuilt%20Obstacle%20map%20perimeter%20%23%204.png)
+
+5. **Load the map in simulation.** The notebook writes its mapped geometry to `map_obstacles_2.txt` beside the input map. The Java source's default path is `C:\Downloads\map_obstacles_calibrated.txt`; point it to the generated file (or copy the reviewed output to the expected path) before starting the simulation.
 
 ### Local disturbance-rejection control
 
@@ -132,12 +152,42 @@ The companion Monte Carlo benchmark runs \(N=50\) trials and reports peak impact
 
 These are the results recorded by the benchmark notebook; they are measurements from the described simulation, not hardware test results.
 
+![Monte Carlo validation run, console output](Monte%20Carlo%20validation%20Part%201.png)
+
 ![Monte Carlo controller benchmark results](Monte%20Carlo%20Validation%20Part%202.png)
 
-Related recordings:
+### Kinematic Tester and simulation videos
 
-- [Collision and disturbance simulation](Collisions%20Testing.mp4)
-- [Kinematic tester simulation](Kinematic%20Tester%20Video.mp4)
+The Kinematic Tester is the Java/WPILib simulation entry point included in this repository. It combines the local \(O(1)\) controller, the Ghost Follower, simulated field/obstacle geometry, impact injection, and telemetry output. Start the WPILib simulation, connect AdvantageScope to the telemetry source configured by the host robot project, and use the configured **C** control (raw joystick button 3 in the current Java source) to toggle the stochastic test loop. The displayed field, ghost pose, robot pose, and impact markers support visual inspection while telemetry is recorded.
+
+![AdvantageScope field and simulation telemetry](Different%20Field.png)
+
+The following recordings are embedded here. If a browser or GitHub renderer does not play repository-hosted MP4 inline, use the video link directly below the player.
+
+#### Kinematic Tester
+
+<video controls preload="metadata" width="100%" src="./Kinematic%20Tester%20Video.mp4">
+  Your browser does not support embedded video. [Open the Kinematic Tester video](Kinematic%20Tester%20Video.mp4).
+</video>
+
+[Open the Kinematic Tester video](Kinematic%20Tester%20Video.mp4)
+
+#### Collision and impact testing
+
+<video controls preload="metadata" width="100%" src="./Collisions%20Testing.mp4">
+  Your browser does not support embedded video. [Open the collision testing video](Collisions%20Testing.mp4).
+</video>
+
+[Open the collision testing video](Collisions%20Testing.mp4)
+
+### End-to-end workflow
+
+1. Prepare a field image and the reference obstacle geometry.
+2. Run the OpenCV notebook to select colors, calibrate the image, map obstacle perimeters, and inspect the generated line records.
+3. Point the Java simulation at the calibrated obstacle map.
+4. Run the Java source inside a WPILib/GradleRIO robot project and connect AdvantageScope to that project's telemetry.
+5. Exercise the path and local controller in simulation; toggle the randomized impact loop with the configured **C** control.
+6. Run the companion Monte Carlo benchmark notebook for the \(N=50\) randomized comparison and inspect its reported metrics and plots.
 
 ## 5. Setup & Installation
 
