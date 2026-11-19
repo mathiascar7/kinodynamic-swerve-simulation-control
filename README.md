@@ -66,6 +66,17 @@ Vertical and horizontal segments are represented directly rather than dividing b
 
 5. **Load the map in simulation.** The notebook writes its mapped geometry to `map_obstacles_2.txt` beside the input map. The Java source's default path is `C:\Downloads\map_obstacles_calibrated.txt`; point it to the generated file (or copy the reviewed output to the expected path) before starting the simulation.
 
+#### Final interactive obstacle calibration
+
+The initial image-to-field calibration can leave a small positional offset, and an obstacle boundary may be represented by separate line segments with small gaps. The additional [Obstacle final calibration code notebook](../Obstacle%20final%20calibration%20code.ipynb) provides a visual correction pass for those issues:
+
+1. Select the field image and obstacle map, then load them together. The tool detects the field bounds and overlays the mapped segments on the image, colored by obstacle group.
+2. Click the visible color of an obstacle group to align its mapped geometry. The tool finds nearby pixels of a similar color, compares their center with the center of the corresponding mapped segments, and translates the whole group by that offset. It converts the pixel movement to meters using the detected field bounds and the known field dimensions (16.54 m × 8.07 m).
+3. If the outline still has small gaps, press **R** to repair continuity. Within each obstacle group, the tool closes nearby gaps between horizontal/vertical segments, including perpendicular joins and collinear fragments, up to 0.50 m. It leaves diagonal segments unchanged.
+4. Review the overlay and press **S** (or click **SAVE [S]**) to save. The tool normally writes to a sibling file ending in `_calibrated.txt`, leaving the selected input map unchanged. Press **ESC** to return to the settings screen.
+
+![Final interactive obstacle calibration overlay](../Final%20obstacle%20calibration%20tweaks.png)
+
 ### Local disturbance-rejection control
 
 The robot-side Java/WPILib local control loop is designed for \(O(1)\) work per update at a fixed four-wheel count. It targets rapid rejection of impact disturbances and wheel-traction failures (slip), while accounting for dynamic motor load transfer.
