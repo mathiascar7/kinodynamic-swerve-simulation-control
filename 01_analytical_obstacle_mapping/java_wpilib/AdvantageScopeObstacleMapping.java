@@ -189,7 +189,7 @@ public class Robot extends TimedRobot {
     // ============================================================
 
     private static final String OBSTACLES_FILE_PATH =
-            "C:\\Downloads\\map_obstacles.txt";
+            "01_analytical_obstacle_mapping/maps/map_obstacles_calibrated.txt";
 
     private static final double ROBOT_LENGTH = 0.85;
     private static final double ROBOT_WIDTH = 0.85;
@@ -505,7 +505,7 @@ public class Robot extends TimedRobot {
         // ========================================================
         // INITIAL WRITE TEST (ON ROBOT INITIALIZATION)
         // ========================================================
-        writeRandomTextOnStartup();
+        // writeRandomTextOnStartup();
 
 
         // ========================================================
@@ -755,7 +755,7 @@ public class Robot extends TimedRobot {
     // ============================================================
 
     private void writeRandomTextOnStartup() {
-        String filePath = "C:\\Downloads\\map_obstacles.txt";
+        String filePath = OBSTACLES_FILE_PATH;
         try {
             File file = new File(filePath);
             File parentDir = file.getParentFile();
@@ -3158,13 +3158,13 @@ public class Robot extends TimedRobot {
 
 
         // ========================================================
-        // EXPORT TO C:\Downloads\map_obstacles.txt (Append Mode)
+        // EXPORT TO THE CALIBRATED MAP (APPEND MODE)
         // ========================================================
         exportObstacleToNotepad(sortedLines);
     }
 
     private void exportObstacleToNotepad(List<TangentLine> sortedLines) {
-        String filePath = "C:\\Downloads\\map_obstacles.txt";
+        String filePath = OBSTACLES_FILE_PATH;
 
         try {
             File file = new File(filePath);

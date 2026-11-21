@@ -1,0 +1,990 @@
+{
+  "meta": {
+    "dt_control_s": 0.002,
+    "control_freq_hz": 500,
+    "physics_substeps": 10,
+    "trials_per_class": 40,
+    "total_paired_trials": 120
+  },
+  "global_summary": {
+    "Proposed_O1_Swerve": {
+      "mean_latency_us": {
+        "mean": 42.827523052599005,
+        "std": 4.974425465810039,
+        "median": 41.618457449426096
+      },
+      "p99_latency_us": {
+        "mean": 109.26056678787678,
+        "std": 122.51778712957466,
+        "median": 76.5429995590239
+      },
+      "deadline_miss_pct": {
+        "mean": 0.0017730496453900709,
+        "std": 0.013676155941412612,
+        "median": 0.0
+      },
+      "peak_ice_excursion_mm": {
+        "mean": 558.0299941201815,
+        "std": 387.6034757428714,
+        "median": 452.66900148384843
+      },
+      "peak_collision_deflection_mm": {
+        "mean": 648.0069597161167,
+        "std": 386.2794638258471,
+        "median": 565.0708074556424
+      },
+      "collision_recovery_ms": {
+        "mean": 190.28333333333333,
+        "std": 53.57162539646382,
+        "median": 210.0
+      },
+      "rmse_mm": {
+        "mean": 423.3427842376275,
+        "std": 268.9589488199235,
+        "median": 351.4078366545783
+      },
+      "peak_yaw_err_deg": {
+        "mean": 12.776039162500345,
+        "std": 8.647521149805675,
+        "median": 11.01035611975152
+      },
+      "tire_slip_rms": {
+        "mean": 0.3677508163891537,
+        "std": 0.14883991344023653,
+        "median": 0.3817958952727881
+      },
+      "observer_fpr": {
+        "mean": 14.32362173426114,
+        "std": 13.90057508030543,
+        "median": 10.653476007806717
+      },
+      "observer_tpr": {
+        "mean": 35.58372579696228,
+        "std": 33.94717216576565,
+        "median": 24.531414005098217
+      }
+    },
+    "Ablation_O1_StaticLoad": {
+      "mean_latency_us": {
+        "mean": 33.73102127283449,
+        "std": 5.320292918831275,
+        "median": 32.76877662156426
+      },
+      "p99_latency_us": {
+        "mean": 82.74207480856913,
+        "std": 96.325302914338,
+        "median": 59.072500735055684
+      },
+      "deadline_miss_pct": {
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0
+      },
+      "peak_ice_excursion_mm": {
+        "mean": 569.507972775356,
+        "std": 398.85736972078865,
+        "median": 425.42301289493844
+      },
+      "peak_collision_deflection_mm": {
+        "mean": 676.1969105795491,
+        "std": 405.45402264195985,
+        "median": 558.6310003363926
+      },
+      "collision_recovery_ms": {
+        "mean": 195.84166666666667,
+        "std": 45.649375419500274,
+        "median": 210.0
+      },
+      "rmse_mm": {
+        "mean": 442.90567734918005,
+        "std": 277.92129524698305,
+        "median": 372.44019505176857
+      },
+      "peak_yaw_err_deg": {
+        "mean": 10.09135333240578,
+        "std": 7.7680274064581605,
+        "median": 8.244433784583816
+      },
+      "tire_slip_rms": {
+        "mean": 0.33753331972438644,
+        "std": 0.16931347358415108,
+        "median": 0.33208160547127075
+      },
+      "observer_fpr": {
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0
+      },
+      "observer_tpr": {
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0
+      }
+    },
+    "Fair_Adaptive_ADMM_QP": {
+      "mean_latency_us": {
+        "mean": 96.93184574605263,
+        "std": 8.02759957356295,
+        "median": 95.8512234590555
+      },
+      "p99_latency_us": {
+        "mean": 203.54127479428527,
+        "std": 125.57213983514212,
+        "median": 187.12750003032858
+      },
+      "deadline_miss_pct": {
+        "mean": 0.00975177304964539,
+        "std": 0.08830463972021504,
+        "median": 0.0
+      },
+      "peak_ice_excursion_mm": {
+        "mean": 579.2207247393703,
+        "std": 389.76176521700836,
+        "median": 480.99595588178965
+      },
+      "peak_collision_deflection_mm": {
+        "mean": 668.5747793310724,
+        "std": 383.16356936100686,
+        "median": 579.953338493134
+      },
+      "collision_recovery_ms": {
+        "mean": 196.99166666666667,
+        "std": 45.0599033282938,
+        "median": 210.0
+      },
+      "rmse_mm": {
+        "mean": 434.1468113707434,
+        "std": 261.7381738623104,
+        "median": 365.3181958490044
+      },
+      "peak_yaw_err_deg": {
+        "mean": 10.87255281034239,
+        "std": 8.052231174910082,
+        "median": 8.43687284108758
+      },
+      "tire_slip_rms": {
+        "mean": 0.3471761839754405,
+        "std": 0.15701631708519312,
+        "median": 0.34400360855812384
+      },
+      "observer_fpr": {
+        "mean": 12.4788880042714,
+        "std": 12.409484292120213,
+        "median": 7.9552015802269045
+      },
+      "observer_tpr": {
+        "mean": 32.91863198443939,
+        "std": 32.155778898576926,
+        "median": 20.589067145988473
+      }
+    },
+    "Standard_ADMM_QP": {
+      "mean_latency_us": {
+        "mean": 89.08953901062893,
+        "std": 10.021439830749857,
+        "median": 86.9653724003775
+      },
+      "p99_latency_us": {
+        "mean": 223.69063333129216,
+        "std": 237.11639112795544,
+        "median": 174.97700006060768
+      },
+      "deadline_miss_pct": {
+        "mean": 0.014184397163120567,
+        "std": 0.09938864341872315,
+        "median": 0.0
+      },
+      "peak_ice_excursion_mm": {
+        "mean": 547.0053718376486,
+        "std": 382.39555311703225,
+        "median": 401.6972740161194
+      },
+      "peak_collision_deflection_mm": {
+        "mean": 655.2732647217842,
+        "std": 392.56407306151686,
+        "median": 532.8455864360092
+      },
+      "collision_recovery_ms": {
+        "mean": 196.70833333333334,
+        "std": 43.09680247713862,
+        "median": 210.0
+      },
+      "rmse_mm": {
+        "mean": 428.1210845953689,
+        "std": 267.64594138872883,
+        "median": 345.6839119484924
+      },
+      "peak_yaw_err_deg": {
+        "mean": 9.269759325251425,
+        "std": 6.745621505157852,
+        "median": 7.483459177378217
+      },
+      "tire_slip_rms": {
+        "mean": 0.32927242608355073,
+        "std": 0.1673293058505211,
+        "median": 0.3061207768771922
+      },
+      "observer_fpr": {
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0
+      },
+      "observer_tpr": {
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0
+      }
+    }
+  },
+  "per_platform_summary": {
+    "Class1_AgileMini_32kg": {
+      "Proposed_O1_Swerve": {
+        "mean_latency_us": {
+          "mean": 44.25496542324331,
+          "std": 7.776654611082275
+        },
+        "p99_latency_us": {
+          "mean": 145.61177514769963,
+          "std": 188.330251768097
+        },
+        "deadline_miss_pct": {
+          "mean": 0.005319148936170213,
+          "std": 0.023481002964165137
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 398.2182110534167,
+          "std": 284.3745031212255
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 529.7321863189356,
+          "std": 299.0106112025107
+        },
+        "collision_recovery_ms": {
+          "mean": 201.325,
+          "std": 27.9572819741944
+        },
+        "rmse_mm": {
+          "mean": 348.572410779555,
+          "std": 206.88852628138605
+        },
+        "peak_yaw_err_deg": {
+          "mean": 11.893774582470636,
+          "std": 9.585245251693955
+        },
+        "tire_slip_rms": {
+          "mean": 0.2917380296588433,
+          "std": 0.1436704445491159
+        },
+        "observer_fpr": {
+          "mean": 13.828548696260373,
+          "std": 12.737918505560668
+        },
+        "observer_tpr": {
+          "mean": 34.356191261093905,
+          "std": 37.89150832486538
+        }
+      },
+      "Ablation_O1_StaticLoad": {
+        "mean_latency_us": {
+          "mean": 34.7567978602417,
+          "std": 8.840875679303693
+        },
+        "p99_latency_us": {
+          "mean": 108.02774980857075,
+          "std": 151.8268026583808
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 326.86746385068807,
+          "std": 211.87464212141933
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 472.2054046696318,
+          "std": 245.75294126526188
+        },
+        "collision_recovery_ms": {
+          "mean": 206.925,
+          "std": 19.448007610035532
+        },
+        "rmse_mm": {
+          "mean": 308.7732382161262,
+          "std": 169.59668188841027
+        },
+        "peak_yaw_err_deg": {
+          "mean": 8.373244685415383,
+          "std": 8.00488108037455
+        },
+        "tire_slip_rms": {
+          "mean": 0.22159855460155614,
+          "std": 0.12956003338667615
+        },
+        "observer_fpr": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "observer_tpr": {
+          "mean": 0.0,
+          "std": 0.0
+        }
+      },
+      "Fair_Adaptive_ADMM_QP": {
+        "mean_latency_us": {
+          "mean": 98.08932978180661,
+          "std": 13.605706440439548
+        },
+        "p99_latency_us": {
+          "mean": 223.9967248642644,
+          "std": 214.95327353076897
+        },
+        "deadline_miss_pct": {
+          "mean": 0.02925531914893617,
+          "std": 0.1523410579462471
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 366.85210678269834,
+          "std": 279.38837495537507
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 500.1344544885953,
+          "std": 285.78746034773684
+        },
+        "collision_recovery_ms": {
+          "mean": 207.175,
+          "std": 17.866868779951343
+        },
+        "rmse_mm": {
+          "mean": 325.40075539370343,
+          "std": 190.17949594946137
+        },
+        "peak_yaw_err_deg": {
+          "mean": 7.041762918076683,
+          "std": 5.558865514141704
+        },
+        "tire_slip_rms": {
+          "mean": 0.23041867862061535,
+          "std": 0.12700036032021003
+        },
+        "observer_fpr": {
+          "mean": 9.398082221131832,
+          "std": 10.411259218298497
+        },
+        "observer_tpr": {
+          "mean": 28.728120000101747,
+          "std": 34.52249383102389
+        }
+      },
+      "Standard_ADMM_QP": {
+        "mean_latency_us": {
+          "mean": 92.51353192415448,
+          "std": 16.772982662617576
+        },
+        "p99_latency_us": {
+          "mean": 317.63507508730993,
+          "std": 396.3336815289211
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0398936170212766,
+          "std": 0.1698159244635608
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 313.21614832372757,
+          "std": 187.6329989803038
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 466.0344005222579,
+          "std": 243.03175211669935
+        },
+        "collision_recovery_ms": {
+          "mean": 206.875,
+          "std": 19.764235376052373
+        },
+        "rmse_mm": {
+          "mean": 304.17828064368234,
+          "std": 166.54870535262344
+        },
+        "peak_yaw_err_deg": {
+          "mean": 7.843714466307574,
+          "std": 7.410843348794371
+        },
+        "tire_slip_rms": {
+          "mean": 0.2130505445140322,
+          "std": 0.11713095748583754
+        },
+        "observer_fpr": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "observer_tpr": {
+          "mean": 0.0,
+          "std": 0.0
+        }
+      }
+    },
+    "Class2_Standard_72kg": {
+      "Proposed_O1_Swerve": {
+        "mean_latency_us": {
+          "mean": 42.29180850890113,
+          "std": 3.019801578411608
+        },
+        "p99_latency_us": {
+          "mean": 95.30005015039937,
+          "std": 77.12544572075126
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 659.184791002969,
+          "std": 395.82197381911527
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 775.3747486075681,
+          "std": 414.01241248067566
+        },
+        "collision_recovery_ms": {
+          "mean": 203.625,
+          "std": 25.437391718411256
+        },
+        "rmse_mm": {
+          "mean": 513.870907678923,
+          "std": 289.6894126371052
+        },
+        "peak_yaw_err_deg": {
+          "mean": 14.218028510886239,
+          "std": 8.225857844170065
+        },
+        "tire_slip_rms": {
+          "mean": 0.37937633357420536,
+          "std": 0.12285992179051465
+        },
+        "observer_fpr": {
+          "mean": 15.121049176451288,
+          "std": 13.713964090979415
+        },
+        "observer_tpr": {
+          "mean": 46.165675098012706,
+          "std": 36.317514805036815
+        }
+      },
+      "Ablation_O1_StaticLoad": {
+        "mean_latency_us": {
+          "mean": 33.22841222636774,
+          "std": 1.9917540050529223
+        },
+        "p99_latency_us": {
+          "mean": 75.74989983277197,
+          "std": 58.87554837507232
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 678.5546210111967,
+          "std": 417.80164585494816
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 839.4844647270322,
+          "std": 445.36954599529344
+        },
+        "collision_recovery_ms": {
+          "mean": 199.975,
+          "std": 35.98253671877441
+        },
+        "rmse_mm": {
+          "mean": 550.6520359144185,
+          "std": 310.6860060089569
+        },
+        "peak_yaw_err_deg": {
+          "mean": 11.190760686615125,
+          "std": 8.523657765576633
+        },
+        "tire_slip_rms": {
+          "mean": 0.3686478389016145,
+          "std": 0.16135672743266916
+        },
+        "observer_fpr": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "observer_tpr": {
+          "mean": 0.0,
+          "std": 0.0
+        }
+      },
+      "Fair_Adaptive_ADMM_QP": {
+        "mean_latency_us": {
+          "mean": 96.32695214020984,
+          "std": 2.3190004546856677
+        },
+        "p99_latency_us": {
+          "mean": 197.6044998391445,
+          "std": 23.913234753948952
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 674.567107161903,
+          "std": 402.3023376268153
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 794.2135018841393,
+          "std": 426.0999942772485
+        },
+        "collision_recovery_ms": {
+          "mean": 202.3,
+          "std": 27.819196471280264
+        },
+        "rmse_mm": {
+          "mean": 525.1144199044659,
+          "std": 291.24222122693095
+        },
+        "peak_yaw_err_deg": {
+          "mean": 12.284119883757088,
+          "std": 8.011939037290283
+        },
+        "tire_slip_rms": {
+          "mean": 0.3629578073069331,
+          "std": 0.12985742131256656
+        },
+        "observer_fpr": {
+          "mean": 13.607121349679968,
+          "std": 11.850106568850316
+        },
+        "observer_tpr": {
+          "mean": 43.52522146371792,
+          "std": 35.71648369141668
+        }
+      },
+      "Standard_ADMM_QP": {
+        "mean_latency_us": {
+          "mean": 87.25221010671643,
+          "std": 1.7433938588387627
+        },
+        "p99_latency_us": {
+          "mean": 180.88837503000838,
+          "std": 16.314783632169032
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 641.1671054610787,
+          "std": 397.5079292762231
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 795.9881905719783,
+          "std": 431.68779662029084
+        },
+        "collision_recovery_ms": {
+          "mean": 200.425,
+          "std": 34.79381576350336
+        },
+        "rmse_mm": {
+          "mean": 522.2192953696974,
+          "std": 299.4493871971089
+        },
+        "peak_yaw_err_deg": {
+          "mean": 10.352985026791188,
+          "std": 7.326861334024261
+        },
+        "tire_slip_rms": {
+          "mean": 0.354251872491473,
+          "std": 0.16248279008631647
+        },
+        "observer_fpr": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "observer_tpr": {
+          "mean": 0.0,
+          "std": 0.0
+        }
+      }
+    },
+    "Class3_HeavyAMR_145kg": {
+      "Proposed_O1_Swerve": {
+        "mean_latency_us": {
+          "mean": 41.9357952256526,
+          "std": 1.6457166050135206
+        },
+        "p99_latency_us": {
+          "mean": 86.86987506553137,
+          "std": 48.12065156700855
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 616.6869803041591,
+          "std": 425.03141993924856
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 638.9139442218468,
+          "std": 404.231129111396
+        },
+        "collision_recovery_ms": {
+          "mean": 165.9,
+          "std": 80.06785583779259
+        },
+        "rmse_mm": {
+          "mean": 407.5850342544043,
+          "std": 282.15157107467377
+        },
+        "peak_yaw_err_deg": {
+          "mean": 12.216314394144158,
+          "std": 8.085773353707046
+        },
+        "tire_slip_rms": {
+          "mean": 0.43213808593441244,
+          "std": 0.14677716070923624
+        },
+        "observer_fpr": {
+          "mean": 14.021267330071755,
+          "std": 15.435746474914696
+        },
+        "observer_tpr": {
+          "mean": 26.229311031780213,
+          "std": 23.568157275541996
+        }
+      },
+      "Ablation_O1_StaticLoad": {
+        "mean_latency_us": {
+          "mean": 33.20785373189404,
+          "std": 1.6189303044749255
+        },
+        "p99_latency_us": {
+          "mean": 64.44857478436468,
+          "std": 27.28866269634303
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 703.1018334641834,
+          "std": 418.43256254000534
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 716.9008623419835,
+          "std": 413.6852149992099
+        },
+        "collision_recovery_ms": {
+          "mean": 180.625,
+          "std": 65.6086640229154
+        },
+        "rmse_mm": {
+          "mean": 469.29175791699544,
+          "std": 281.6364459961036
+        },
+        "peak_yaw_err_deg": {
+          "mean": 10.710054625186832,
+          "std": 6.536855413494067
+        },
+        "tire_slip_rms": {
+          "mean": 0.42235356566998866,
+          "std": 0.1499735794424541
+        },
+        "observer_fpr": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "observer_tpr": {
+          "mean": 0.0,
+          "std": 0.0
+        }
+      },
+      "Fair_Adaptive_ADMM_QP": {
+        "mean_latency_us": {
+          "mean": 96.37925531614141,
+          "std": 2.0189610265295026
+        },
+        "p99_latency_us": {
+          "mean": 189.0225996794471,
+          "std": 25.602111415234976
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 696.2429602735095,
+          "std": 392.43078088859227
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 711.3763816204826,
+          "std": 370.901341727965
+        },
+        "collision_recovery_ms": {
+          "mean": 181.5,
+          "std": 68.70785421456
+        },
+        "rmse_mm": {
+          "mean": 451.92525881406107,
+          "std": 259.0427035191407
+        },
+        "peak_yaw_err_deg": {
+          "mean": 13.291775629193399,
+          "std": 8.924719864511893
+        },
+        "tire_slip_rms": {
+          "mean": 0.4481520659987731,
+          "std": 0.132437792261189
+        },
+        "observer_fpr": {
+          "mean": 14.4314604420024,
+          "std": 14.356642140116998
+        },
+        "observer_tpr": {
+          "mean": 26.50255448949852,
+          "std": 22.625678001723365
+        }
+      },
+      "Standard_ADMM_QP": {
+        "mean_latency_us": {
+          "mean": 87.50287500101585,
+          "std": 1.999222791484159
+        },
+        "p99_latency_us": {
+          "mean": 172.54844987655824,
+          "std": 24.409636028942085
+        },
+        "deadline_miss_pct": {
+          "mean": 0.0026595744680851063,
+          "std": 0.016820625851959464
+        },
+        "peak_ice_excursion_mm": {
+          "mean": 686.632861728139,
+          "std": 409.64715319957355
+        },
+        "peak_collision_deflection_mm": {
+          "mean": 703.7972030711168,
+          "std": 406.63353789237254
+        },
+        "collision_recovery_ms": {
+          "mean": 182.825,
+          "std": 61.22212081366568
+        },
+        "rmse_mm": {
+          "mean": 457.965677772727,
+          "std": 274.62235670863
+        },
+        "peak_yaw_err_deg": {
+          "mean": 9.612578482655511,
+          "std": 5.17981562444996
+        },
+        "tire_slip_rms": {
+          "mean": 0.42051486124514686,
+          "std": 0.14926597009547365
+        },
+        "observer_fpr": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "observer_tpr": {
+          "mean": 0.0,
+          "std": 0.0
+        }
+      }
+    }
+  },
+  "holm_bonferroni_pairwise": [
+    {
+      "comparison": "Proposed_vs_Fair_Adaptive_ADMM_QP",
+      "metric": "mean_latency_us",
+      "cliffs_delta": -1.0,
+      "mean_diff": -54.10432269345362,
+      "ci95_low": -55.22030141822575,
+      "ci95_high": -53.202028124039465,
+      "p_holm": 3.5944556725405184e-20
+    },
+    {
+      "comparison": "Proposed_vs_Standard_ADMM_QP",
+      "metric": "mean_latency_us",
+      "cliffs_delta": -1.0,
+      "mean_diff": -46.26201595802992,
+      "ci95_low": -47.68753868938883,
+      "ci95_high": -45.14957240919218,
+      "p_holm": 3.5944556725405184e-20
+    },
+    {
+      "comparison": "Proposed_vs_Ablation_O1_StaticLoad",
+      "metric": "mean_latency_us",
+      "cliffs_delta": 0.9463888888888888,
+      "mean_diff": 9.096501779764521,
+      "ci95_low": 8.377598136777697,
+      "ci95_high": 9.79858142623032,
+      "p_holm": 5.792710329483463e-19
+    },
+    {
+      "comparison": "Proposed_vs_Standard_ADMM_QP",
+      "metric": "tire_slip_rms",
+      "cliffs_delta": 0.16333333333333333,
+      "mean_diff": 0.038478390305603,
+      "ci95_low": 0.019260973149779582,
+      "ci95_high": 0.05776398613490048,
+      "p_holm": 0.0004663920061420832
+    },
+    {
+      "comparison": "Proposed_vs_Ablation_O1_StaticLoad",
+      "metric": "tire_slip_rms",
+      "cliffs_delta": 0.1226388888888889,
+      "mean_diff": 0.030217496664767248,
+      "ci95_low": 0.012102509228657889,
+      "ci95_high": 0.04802883153305434,
+      "p_holm": 0.003356546943037907
+    },
+    {
+      "comparison": "Proposed_vs_Fair_Adaptive_ADMM_QP",
+      "metric": "tire_slip_rms",
+      "cliffs_delta": 0.08388888888888889,
+      "mean_diff": 0.020574632413713167,
+      "ci95_low": 0.004067428904078166,
+      "ci95_high": 0.03709448555964653,
+      "p_holm": 0.20552125585494208
+    },
+    {
+      "comparison": "Proposed_vs_Standard_ADMM_QP",
+      "metric": "collision_recovery_ms",
+      "cliffs_delta": -0.05798611111111111,
+      "mean_diff": -6.425,
+      "ci95_low": -13.975208333333333,
+      "ci95_high": 0.09187500000000075,
+      "p_holm": 0.3532720595649387
+    },
+    {
+      "comparison": "Proposed_vs_Fair_Adaptive_ADMM_QP",
+      "metric": "collision_recovery_ms",
+      "cliffs_delta": -0.06444444444444444,
+      "mean_diff": -6.708333333333333,
+      "ci95_low": -14.608541666666666,
+      "ci95_high": 0.3591666666666697,
+      "p_holm": 0.48149556139345323
+    },
+    {
+      "comparison": "Proposed_vs_Ablation_O1_StaticLoad",
+      "metric": "collision_recovery_ms",
+      "cliffs_delta": -0.05736111111111111,
+      "mean_diff": -5.558333333333334,
+      "ci95_low": -12.783958333333333,
+      "ci95_high": 1.2768750000000066,
+      "p_holm": 0.64865178868529
+    },
+    {
+      "comparison": "Proposed_vs_Fair_Adaptive_ADMM_QP",
+      "metric": "peak_collision_deflection_mm",
+      "cliffs_delta": -0.04513888888888889,
+      "mean_diff": -20.56781961495553,
+      "ci95_low": -57.68772677589174,
+      "ci95_high": 16.576762405557695,
+      "p_holm": 0.8931068887359557
+    },
+    {
+      "comparison": "Proposed_vs_Fair_Adaptive_ADMM_QP",
+      "metric": "peak_ice_excursion_mm",
+      "cliffs_delta": -0.03986111111111111,
+      "mean_diff": -21.190730619188738,
+      "ci95_low": -58.87834099837871,
+      "ci95_high": 16.847178252926103,
+      "p_holm": 1.0
+    },
+    {
+      "comparison": "Proposed_vs_Fair_Adaptive_ADMM_QP",
+      "metric": "rmse_mm",
+      "cliffs_delta": -0.04722222222222222,
+      "mean_diff": -10.804027133115998,
+      "ci95_low": -34.89121355389689,
+      "ci95_high": 14.527345907274263,
+      "p_holm": 1.0
+    },
+    {
+      "comparison": "Proposed_vs_Standard_ADMM_QP",
+      "metric": "peak_ice_excursion_mm",
+      "cliffs_delta": 0.006944444444444444,
+      "mean_diff": 11.024622282533146,
+      "ci95_low": -29.750422774769696,
+      "ci95_high": 53.384905695138634,
+      "p_holm": 1.0
+    },
+    {
+      "comparison": "Proposed_vs_Ablation_O1_StaticLoad",
+      "metric": "peak_collision_deflection_mm",
+      "cliffs_delta": -0.04125,
+      "mean_diff": -28.189950863432312,
+      "ci95_low": -67.25145805270965,
+      "ci95_high": 9.044568884542544,
+      "p_holm": 1.0
+    },
+    {
+      "comparison": "Proposed_vs_Ablation_O1_StaticLoad",
+      "metric": "rmse_mm",
+      "cliffs_delta": -0.04708333333333333,
+      "mean_diff": -19.562893111552615,
+      "ci95_low": -47.70717182355238,
+      "ci95_high": 7.949994010341374,
+      "p_holm": 1.0
+    },
+    {
+      "comparison": "Proposed_vs_Ablation_O1_StaticLoad",
+      "metric": "peak_ice_excursion_mm",
+      "cliffs_delta": -0.018194444444444444,
+      "mean_diff": -11.47797865517449,
+      "ci95_low": -51.26858919123376,
+      "ci95_high": 29.995776585008212,
+      "p_holm": 1.0
+    },
+    {
+      "comparison": "Proposed_vs_Standard_ADMM_QP",
+      "metric": "rmse_mm",
+      "cliffs_delta": -0.02236111111111111,
+      "mean_diff": -4.778300357741451,
+      "ci95_low": -32.750364302673105,
+      "ci95_high": 22.985949041300476,
+      "p_holm": 1.0
+    },
+    {
+      "comparison": "Proposed_vs_Standard_ADMM_QP",
+      "metric": "peak_collision_deflection_mm",
+      "cliffs_delta": -0.016666666666666666,
+      "mean_diff": -7.266305005667494,
+      "ci95_low": -48.99626076999096,
+      "ci95_high": 32.180199920406416,
+      "p_holm": 1.0
+    }
+  ],
+  "asymptotic_scaling": {
+    "spec_name": "Class3_HeavyAMR_145kg",
+    "horizons": [
+      10,
+      20,
+      40,
+      80,
+      120
+    ],
+    "proposed_median_us": 0.6999980541877449,
+    "offline_ms": [
+      0.46719999954802915,
+      9.1842000001634,
+      14.356499999848893,
+      99.59470000103465,
+      93.27330000087386
+    ],
+    "online_us": [
+      46.40000042854808,
+      46.59999831346795,
+      51.44999886397272,
+      1178.0500008171657,
+      1150.799998868024
+    ],
+    "alpha_online": 1.5082932574664225,
+    "alpha_offline": 2.0752525938740187
+  }
+}
