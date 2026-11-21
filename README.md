@@ -21,7 +21,7 @@ flowchart LR
     E --> F[WPILib collision and field simulation]
     F --> G[NetworkTables telemetry]
     G --> H[AdvantageScope field and pose views]
-    I[Python benchmark: generated SE(2) scenarios] --> J[Closed-form and ADMM-QP comparisons]
+    I["Python benchmark: generated SE(2) scenarios"] --> J[Closed-form and ADMM-QP comparisons]
     J --> K[CSV, JSON, cache, figures]
     K --> L[Benchmark report in this README]
 ```
