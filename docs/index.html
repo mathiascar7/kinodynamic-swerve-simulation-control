@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive explainer for LINEAR_META_RISK_SCORE and state-conditioned topological features in signed functional connectomes.">
+  <title>Interactive Connectome Risk-State Explainer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17263d;
+      --muted: #5d6d82;
+      --line: #dce4ef;
+      --panel: #ffffff;
+      --navy: #18395f;
+      --teal: #16836c;
+      --amber: #c98319;
+      --violet: #7650a4;
+      --shadow: 0 16px 42px rgba(27, 49, 77, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f6fb;
+      color: var(--ink);
+      font: 16px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a {
+      color: #245c9e;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 38px 0 56px;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 30px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .topline a {
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--teal);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 860px;
+      margin-bottom: 12px;
+      font-size: clamp(2rem, 5vw, 3.35rem);
+      letter-spacing: -0.045em;
+      line-height: 1.08;
+    }
+
+    .lede {
+      max-width: 790px;
+      margin-bottom: 25px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .benchmarks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 27px;
+    }
+
+    .benchmark {
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .benchmark strong {
+      margin-left: 5px;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(270px, 330px) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      padding: 22px;
+    }
+
+    .controls h2,
+    .surface-panel h2 {
+      margin-bottom: 5px;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-intro {
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .control {
+      margin: 0 0 20px;
+    }
+
+    .control:last-of-type {
+      margin-bottom: 10px;
+    }
+
+    .control-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+      font-size: 0.93rem;
+      font-weight: 700;
+    }
+
+    .control-heading output {
+      color: var(--navy);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .control small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.77rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 7px;
+      margin: 5px 0;
+      border-radius: 99px;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+
+    .risk-control input {
+      accent-color: var(--navy);
+    }
+
+    .deceleration-control input {
+      accent-color: var(--teal);
+    }
+
+    .frustration-control input {
+      accent-color: var(--amber);
+    }
+
+    .sinkhole-control input {
+      accent-color: var(--violet);
+    }
+
+    .readout {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 5px 10px;
+      align-items: center;
+      font-size: 0.84rem;
+    }
+
+    .score-row strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .meter {
+      grid-column: 1 / -1;
+      height: 9px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #e9eef5;
+    }
+
+    .meter span {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      transition: width 180ms ease;
+    }
+
+    #linearMeter {
+      background: var(--navy);
+    }
+
+    #conditionedMeter {
+      background: var(--teal);
+    }
+
+    .surface-panel {
+      min-width: 0;
+      padding: 22px 22px 18px;
+    }
+
+    .surface-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px 18px;
+      align-items: baseline;
+    }
+
+    .surface-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      margin-top: 13px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 390px;
+      border-radius: 12px;
+      background: #f9fbfe;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .key {
+      width: 28px;
+      height: 0;
+      border-top: 3px solid #fff;
+      filter: drop-shadow(0 1px 1px #34455d);
+    }
+
+    .key.flat {
+      border-top: 2px dashed #35445a;
+      filter: none;
+    }
+
+    .key.point {
+      width: 10px;
+      height: 10px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background: #17263d;
+      filter: drop-shadow(0 0 1px #17263d);
+    }
+
+    .explanation {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .explanation article {
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fbfcfe;
+    }
+
+    .explanation h3 {
+      margin: 0 0 5px;
+      font-size: 0.92rem;
+    }
+
+    .explanation p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .note {
+      margin: 20px 0 0;
+      padding: 13px 15px;
+      border-left: 3px solid var(--amber);
+      border-radius: 0 9px 9px 0;
+      background: #fff8e9;
+      color: #5c4a28;
+      font-size: 0.82rem;
+    }
+
+    footer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.83rem;
+    }
+
+    @media (max-width: 820px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        order: 1;
+      }
+
+      .surface-panel {
+        order: 2;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 22px, 1180px);
+        padding-top: 22px;
+      }
+
+      .topline {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .controls,
+      .surface-panel {
+        padding: 17px;
+      }
+
+      canvas {
+        height: 310px;
+      }
+
+      .explanation {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <nav class="topline" aria-label="Project navigation">
+      <a href="https://github.com/mathiascar7/signed-connectome-topology">← Repository</a>
+      <span>Interactive methods explainer · V16 signed-connectome audit</span>
+    </nav>
+
+    <header>
+      <p class="eyebrow">Global state × local topology</p>
+      <h1>How the linear risk score conditions topological signal</h1>
+      <p class="lede">
+        Explore how a fold-local summary of 19,900 raw edges can provide a global state anchor for
+        LightGBM to interpret 1,000 higher-order connectome invariants.
+      </p>
+      <div class="benchmarks" aria-label="Audited cohort benchmarks">
+        <span class="benchmark">Flat L2 logistic ROC-AUC<strong>0.5381</strong></span>
+        <span class="benchmark">V16 nested-CV ROC-AUC<strong>0.7164</strong></span>
+        <span class="benchmark">V16 invariants<strong>1,000</strong></span>
+      </div>
+    </header>
+
+    <section class="layout" aria-label="Interactive state-conditioning explorer">
+      <aside class="panel controls">
+        <h2>Adjust network state</h2>
+        <p class="panel-intro">Move any slider to update the selected point and decision surface.</p>
+
+        <div class="control risk-control">
+          <label class="control-heading" for="linearScore">
+            <span>LINEAR_META_RISK_SCORE</span>
+            <output id="linearScoreValue" for="linearScore">0.42</output>
+          </label>
+          <input id="linearScore" type="range" min="0" max="1" step="0.01" value="0.42" aria-describedby="riskHelp">
+          <small id="riskHelp">Global linear state summary, scaled from 0 to 1.</small>
+        </div>
+
+        <div class="control deceleration-control">
+          <label class="control-heading" for="deceleration">
+            <span>Deceleration (Dᵢ)</span>
+            <output id="decelerationValue" for="deceleration">0.62</output>
+          </label>
+          <input id="deceleration" type="range" min="0" max="1" step="0.01" value="0.62" aria-describedby="decelerationHelp">
+          <small id="decelerationHelp">Normalized demonstration value; the audited marginal |d| is 0.0619.</small>
+        </div>
+
+        <div class="control frustration-control">
+          <label class="control-heading" for="frustration">
+            <span>Triadic Frustration (Fᵢ)</span>
+            <output id="frustrationValue" for="frustration">0.55</output>
+          </label>
+          <input id="frustration" type="range" min="0" max="1" step="0.01" value="0.55">
+        </div>
+
+        <div class="control sinkhole-control">
+          <label class="control-heading" for="sinkhole">
+            <span>Dead-End Crash (Sᵢ)</span>
+            <output id="sinkholeValue" for="sinkhole">0.38</output>
+          </label>
+          <input id="sinkhole" type="range" min="0" max="1" step="0.01" value="0.38">
+        </div>
+
+        <div class="readout" aria-live="polite">
+          <div class="score-row">
+            <span>Illustrative flat linear score</span>
+            <strong id="linearReadout">—</strong>
+            <div class="meter" role="meter" aria-label="Illustrative flat linear score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span id="linearMeter"></span>
+            </div>
+          </div>
+          <div class="score-row">
+            <span>Illustrative state-conditioned score</span>
+            <strong id="conditionedReadout">—</strong>
+            <div class="meter" role="meter" aria-label="Illustrative state-conditioned score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span id="conditionedMeter"></span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel surface-panel">
+        <div class="surface-header">
+          <div>
+            <h2>State-conditioned decision surface</h2>
+            <p>Current Frustration and Dead-End Crash settings shift the topological surface.</p>
+          </div>
+          <p>Color encodes illustrative relative score</p>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="surface" role="img" aria-label="Decision surface with linear threshold, nonlinear boundary, and selected state"></canvas>
+        </div>
+        <div class="legend" aria-label="Decision surface legend">
+          <span class="legend-item"><span class="key flat"></span>Flat linear threshold</span>
+          <span class="legend-item"><span class="key"></span>State-conditioned boundary</span>
+          <span class="legend-item"><span class="key point"></span>Selected state</span>
+        </div>
+        <div class="explanation">
+          <article>
+            <h3>Flat edge model</h3>
+            <p>One global score maps to one threshold, so localized circuit patterns do not change the boundary.</p>
+          </article>
+          <article>
+            <h3>Topology conditioned on state</h3>
+            <p>The same Deceleration value can contribute differently across global states, exposing nonlinear regimes.</p>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <p class="note">
+      This is a conceptual interaction, not a trained subject-level predictor. Slider values are normalized for visualization;
+      the displayed ROC-AUC values are the reported cohort benchmarks from the audit.
+    </p>
+    <footer>
+      <a href="https://github.com/mathiascar7/signed-connectome-topology">View the repository and full audit</a>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const inputs = {
+        risk: document.getElementById("linearScore"),
+        deceleration: document.getElementById("deceleration"),
+        frustration: document.getElementById("frustration"),
+        sinkhole: document.getElementById("sinkhole")
+      };
+      const outputs = {
+        risk: document.getElementById("linearScoreValue"),
+        deceleration: document.getElementById("decelerationValue"),
+        frustration: document.getElementById("frustrationValue"),
+        sinkhole: document.getElementById("sinkholeValue")
+      };
+      const canvas = document.getElementById("surface");
+      const context = canvas.getContext("2d");
+      const sigmoid = (x) => 1 / (1 + Math.exp(-x));
+
+      function values() {
+        return {
+          risk: Number(inputs.risk.value),
+          deceleration: Number(inputs.deceleration.value),
+          frustration: Number(inputs.frustration.value),
+          sinkhole: Number(inputs.sinkhole.value)
+        };
+      }
+
+      function linearScore(risk) {
+        return sigmoid(-1.35 + 2.7 * risk);
+      }
+
+      function conditionedScore(risk, deceleration, frustration, sinkhole) {
+        const stateGate = 0.25 + 0.75 * 4 * risk * (1 - risk);
+        const globalLogit = -1.35 + 2.7 * risk;
+        const topologyLogit = stateGate * (
+          1.35 * deceleration +
+          0.4 * (frustration - 0.5) +
+          0.4 * (sinkhole - 0.5) +
+          0.55 * deceleration * (frustration + sinkhole) / 2
+        );
+        return sigmoid(globalLogit + topologyLogit);
+      }
+
+      function colorFor(score) {
+        const stops = [
+          [0.00, [230, 239, 249]],
+          [0.35, [107, 165, 190]],
+          [0.55, [57, 153, 139]],
+          [0.75, [241, 190, 92]],
+          [1.00, [212, 105, 88]]
+        ];
+        let left = stops[0];
+        let right = stops[stops.length - 1];
+        for (let i = 1; i < stops.length; i += 1) {
+          if (score <= stops[i][0]) {
+            left = stops[i - 1];
+            right = stops[i];
+            break;
+          }
+        }
+        const amount = Math.max(0, Math.min(1, (score - left[0]) / (right[0] - left[0])));
+        const rgb = left[1].map((channel, index) => Math.round(channel + (right[1][index] - channel) * amount));
+        return `rgb(${rgb.join(",")})`;
+      }
+
+      function drawSurface(current) {
+        const bounds = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = Math.round(bounds.width * ratio);
+        canvas.height = Math.round(bounds.height * ratio);
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+        const width = bounds.width;
+        const height = bounds.height;
+        const plot = { left: 58, top: 18, right: width - 18, bottom: height - 50 };
+        const plotWidth = plot.right - plot.left;
+        const plotHeight = plot.bottom - plot.top;
+        context.clearRect(0, 0, width, height);
+
+        const columns = Math.max(45, Math.floor(plotWidth / 10));
+        const rows = Math.max(24, Math.floor(plotHeight / 10));
+        for (let row = 0; row < rows; row += 1) {
+          const deceleration = 1 - (row + 0.5) / rows;
+          for (let column = 0; column < columns; column += 1) {
+            const risk = (column + 0.5) / columns;
+            const score = conditionedScore(risk, deceleration, current.frustration, current.sinkhole);
+            const cellWidth = plotWidth / columns;
+            const cellHeight = plotHeight / rows;
+            context.fillStyle = colorFor(score);
+            context.fillRect(
+              plot.left + column * cellWidth,
+              plot.top + row * cellHeight,
+              cellWidth + 0.6,
+              cellHeight + 0.6
+            );
+          }
+        }
+
+        context.strokeStyle = "rgba(255,255,255,0.48)";
+        context.lineWidth = 1;
+        for (let tick = 0; tick <= 4; tick += 1) {
+          const x = plot.left + plotWidth * tick / 4;
+          const y = plot.top + plotHeight * tick / 4;
+          context.beginPath();
+          context.moveTo(x, plot.top);
+          context.lineTo(x, plot.bottom);
+          context.stroke();
+          context.beginPath();
+          context.moveTo(plot.left, y);
+          context.lineTo(plot.right, y);
+          context.stroke();
+        }
+
+        const flatX = plot.left + plotWidth * 0.5;
+        context.save();
+        context.setLineDash([7, 5]);
+        context.strokeStyle = "#26384e";
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(flatX, plot.top);
+        context.lineTo(flatX, plot.bottom);
+        context.stroke();
+        context.restore();
+
+        context.save();
+        context.strokeStyle = "#ffffff";
+        context.lineWidth = 3;
+        context.shadowColor = "rgba(20,35,55,0.75)";
+        context.shadowBlur = 4;
+        context.beginPath();
+        let active = false;
+        for (let step = 0; step <= 100; step += 1) {
+          const deceleration = step / 100;
+          let low = 0;
+          let high = 1;
+          if (conditionedScore(low, deceleration, current.frustration, current.sinkhole) >= 0.5 ||
+              conditionedScore(high, deceleration, current.frustration, current.sinkhole) < 0.5) {
+            active = false;
+            continue;
+          }
+          for (let iteration = 0; iteration < 24; iteration += 1) {
+            const middle = (low + high) / 2;
+            if (conditionedScore(middle, deceleration, current.frustration, current.sinkhole) >= 0.5) {
+              high = middle;
+            } else {
+              low = middle;
+            }
+          }
+          const x = plot.left + plotWidth * (low + high) / 2;
+          const y = plot.bottom - plotHeight * deceleration;
+          if (active) {
+            context.lineTo(x, y);
+          } else {
+            context.moveTo(x, y);
+            active = true;
+          }
+        }
+        context.stroke();
+        context.restore();
+
+        const selectedX = plot.left + plotWidth * current.risk;
+        const selectedY = plot.bottom - plotHeight * current.deceleration;
+        context.beginPath();
+        context.arc(selectedX, selectedY, 7, 0, Math.PI * 2);
+        context.fillStyle = "#17263d";
+        context.fill();
+        context.lineWidth = 2.5;
+        context.strokeStyle = "#fff";
+        context.stroke();
+
+        context.fillStyle = "#24364d";
+        context.font = "12px system-ui, sans-serif";
+        context.textAlign = "center";
+        for (let tick = 0; tick <= 4; tick += 1) {
+          const value = tick / 4;
+          const x = plot.left + plotWidth * value;
+          const y = plot.bottom + 18;
+          context.fillText(value.toFixed(value === 0 || value === 1 ? 0 : 2), x, y);
+        }
+        context.textAlign = "left";
+        context.fillText("Global linear state", plot.left, height - 8);
+        context.save();
+        context.translate(15, plot.top + plotHeight / 2);
+        context.rotate(-Math.PI / 2);
+        context.textAlign = "center";
+        context.fillText("Normalized Deceleration (Dᵢ)", 0, 0);
+        context.restore();
+        context.textAlign = "right";
+        context.fillText("1", plot.left - 10, plot.top + 4);
+        context.fillText("0", plot.left - 10, plot.bottom + 4);
+      }
+
+      function update() {
+        const current = values();
+        Object.keys(inputs).forEach((key) => {
+          outputs[key].value = current[key].toFixed(2);
+          outputs[key].textContent = current[key].toFixed(2);
+        });
+
+        const baseline = linearScore(current.risk);
+        const conditioned = conditionedScore(
+          current.risk,
+          current.deceleration,
+          current.frustration,
+          current.sinkhole
+        );
+        document.getElementById("linearReadout").textContent = baseline.toFixed(3);
+        document.getElementById("conditionedReadout").textContent = conditioned.toFixed(3);
+        document.getElementById("linearMeter").style.width = `${baseline * 100}%`;
+        document.getElementById("conditionedMeter").style.width = `${conditioned * 100}%`;
+        document.querySelector('[aria-label="Illustrative flat linear score"]').setAttribute("aria-valuenow", String(Math.round(baseline * 100)));
+        document.querySelector('[aria-label="Illustrative state-conditioned score"]').setAttribute("aria-valuenow", String(Math.round(conditioned * 100)));
+        drawSurface(current);
+      }
+
+      Object.values(inputs).forEach((input) => input.addEventListener("input", update));
+      window.addEventListener("resize", update);
+      update();
+    })();
+  </script>
+</body>
+</html>
