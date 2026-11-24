@@ -3,731 +3,852 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive explainer for LINEAR_META_RISK_SCORE and state-conditioned topological features in signed functional connectomes.">
-  <title>Interactive Connectome Risk-State Explainer</title>
+  <meta name="theme-color" content="#f5f7f5">
+  <meta name="description" content="An interactive guide to bounded-line collision geometry and closed-form swerve force allocation.">
+  <title>Concept Explorer · Swerve Geometry & Control</title>
   <style>
     :root {
       color-scheme: light;
-      --ink: #17263d;
-      --muted: #5d6d82;
-      --line: #dce4ef;
-      --panel: #ffffff;
-      --navy: #18395f;
-      --teal: #16836c;
-      --amber: #c98319;
-      --violet: #7650a4;
-      --shadow: 0 16px 42px rgba(27, 49, 77, 0.09);
+      --paper: #f5f7f5;
+      --surface: #ffffff;
+      --surface-2: #eef2ef;
+      --ink: #17241f;
+      --muted: #64736c;
+      --line: #dce4df;
+      --green: #187b5a;
+      --green-soft: #dff3e9;
+      --blue: #4775b8;
+      --orange: #d77a35;
+      --red: #d94d4d;
+      --shadow: 0 18px 50px rgba(23, 36, 31, .07);
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #111815;
+      --surface: #19221e;
+      --surface-2: #202c26;
+      --ink: #e7eee9;
+      --muted: #a0afa6;
+      --line: #334139;
+      --green: #65c79b;
+      --green-soft: #203b30;
+      --blue: #8cafe7;
+      --orange: #f0a365;
+      --red: #ff7777;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .22);
     }
 
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      background: #f3f6fb;
+      background: var(--paper);
       color: var(--ink);
-      font: 16px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font: 15px/1.6 var(--sans);
+      transition: background .2s ease, color .2s ease;
     }
 
-    a {
-      color: #245c9e;
-    }
-
-    .page {
-      width: min(1180px, calc(100% - 36px));
-      margin: 0 auto;
-      padding: 38px 0 56px;
-    }
-
-    .topline {
+    a { color: inherit; }
+    button, input { font: inherit; }
+    .page { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar {
+      height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 30px;
-      color: var(--muted);
-      font-size: 0.9rem;
+      border-bottom: 1px solid var(--line);
     }
-
-    .topline a {
-      font-weight: 700;
-      text-decoration: none;
+    .wordmark { font-size: 13px; font-weight: 720; letter-spacing: .04em; }
+    .wordmark span { color: var(--green); }
+    .theme-toggle {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 13px;
+      cursor: pointer;
+      font-size: 12px;
     }
+    .theme-toggle:hover { border-color: var(--green); }
 
+    .hero { padding: 70px 0 52px; max-width: 800px; }
     .eyebrow {
-      margin: 0 0 10px;
-      color: var(--teal);
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.13em;
+      color: var(--green);
+      font: 700 11px/1.4 var(--mono);
+      letter-spacing: .13em;
       text-transform: uppercase;
     }
-
-    h1,
-    h2,
-    p {
-      margin-top: 0;
-    }
-
     h1 {
-      max-width: 860px;
-      margin-bottom: 12px;
-      font-size: clamp(2rem, 5vw, 3.35rem);
-      letter-spacing: -0.045em;
-      line-height: 1.08;
+      max-width: 760px;
+      margin: 15px 0 17px;
+      font-size: clamp(36px, 6vw, 64px);
+      letter-spacing: -.055em;
+      line-height: 1.04;
+      font-weight: 650;
     }
-
-    .lede {
-      max-width: 790px;
-      margin-bottom: 25px;
-      color: var(--muted);
-      font-size: 1.08rem;
-    }
-
-    .benchmarks {
+    .hero p { color: var(--muted); font-size: 17px; max-width: 690px; margin: 0; }
+    .hero-note {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 0 0 27px;
-    }
-
-    .benchmark {
-      padding: 8px 13px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: #fff;
+      align-items: center;
+      gap: 9px;
+      margin-top: 23px;
       color: var(--muted);
-      font-size: 0.88rem;
+      font-size: 12px;
     }
+    .note-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
 
-    .benchmark strong {
-      margin-left: 5px;
-      color: var(--ink);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(270px, 330px) minmax(0, 1fr);
-      gap: 20px;
-      align-items: start;
-    }
-
-    .panel {
+    .module {
+      margin: 24px 0 34px;
+      padding: clamp(20px, 4vw, 36px);
       border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--panel);
+      border-radius: 16px;
+      background: var(--surface);
       box-shadow: var(--shadow);
     }
-
-    .controls {
-      padding: 22px;
-    }
-
-    .controls h2,
-    .surface-panel h2 {
-      margin-bottom: 5px;
-      font-size: 1.2rem;
-      letter-spacing: -0.02em;
-    }
-
-    .panel-intro {
-      margin-bottom: 20px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .control {
-      margin: 0 0 20px;
-    }
-
-    .control:last-of-type {
-      margin-bottom: 10px;
-    }
-
-    .control-heading {
+    .module-head {
       display: flex;
+      align-items: flex-start;
+      gap: 16px;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 7px;
-      font-size: 0.93rem;
-      font-weight: 700;
+      margin-bottom: 24px;
     }
-
-    .control-heading output {
-      color: var(--navy);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .control small {
-      display: block;
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 0.77rem;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      height: 7px;
-      margin: 5px 0;
-      border-radius: 99px;
-      accent-color: var(--teal);
-      cursor: pointer;
-    }
-
-    .risk-control input {
-      accent-color: var(--navy);
-    }
-
-    .deceleration-control input {
-      accent-color: var(--teal);
-    }
-
-    .frustration-control input {
-      accent-color: var(--amber);
-    }
-
-    .sinkhole-control input {
-      accent-color: var(--violet);
-    }
-
-    .readout {
+    .module-index {
+      flex: 0 0 38px;
+      height: 38px;
       display: grid;
-      gap: 14px;
-      margin-top: 22px;
-      padding-top: 18px;
-      border-top: 1px solid var(--line);
+      place-items: center;
+      border-radius: 10px;
+      background: var(--green-soft);
+      color: var(--green);
+      font: 700 13px var(--mono);
+    }
+    .module-title { flex: 1; }
+    .module-title h2 { margin: 0; font-size: clamp(21px, 3vw, 27px); letter-spacing: -.035em; line-height: 1.25; }
+    .module-title p { margin: 6px 0 0; color: var(--muted); font-size: 13px; max-width: 650px; }
+    .complexity {
+      border: 1px solid var(--line);
+      color: var(--green);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font: 700 11px var(--mono);
+      white-space: nowrap;
     }
 
-    .score-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 5px 10px;
-      align-items: center;
-      font-size: 0.84rem;
-    }
-
-    .score-row strong {
-      font-variant-numeric: tabular-nums;
-    }
-
-    .meter {
-      grid-column: 1 / -1;
-      height: 9px;
-      overflow: hidden;
-      border-radius: 99px;
-      background: #e9eef5;
-    }
-
-    .meter span {
-      display: block;
-      width: 0;
-      height: 100%;
-      border-radius: inherit;
-      transition: width 180ms ease;
-    }
-
-    #linearMeter {
-      background: var(--navy);
-    }
-
-    #conditionedMeter {
-      background: var(--teal);
-    }
-
-    .surface-panel {
-      min-width: 0;
-      padding: 22px 22px 18px;
-    }
-
-    .surface-header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 8px 18px;
-      align-items: baseline;
-    }
-
-    .surface-header p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.86rem;
-    }
-
-    .canvas-wrap {
-      position: relative;
-      margin-top: 13px;
-    }
-
+    .explorer-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(245px, .8fr); gap: 22px; }
+    .canvas-wrap { min-width: 0; }
     canvas {
       display: block;
       width: 100%;
-      height: 390px;
-      border-radius: 12px;
-      background: #f9fbfe;
-    }
-
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 20px;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.82rem;
-    }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .key {
-      width: 28px;
-      height: 0;
-      border-top: 3px solid #fff;
-      filter: drop-shadow(0 1px 1px #34455d);
-    }
-
-    .key.flat {
-      border-top: 2px dashed #35445a;
-      filter: none;
-    }
-
-    .key.point {
-      width: 10px;
-      height: 10px;
-      border: 2px solid #fff;
-      border-radius: 50%;
-      background: #17263d;
-      filter: drop-shadow(0 0 1px #17263d);
-    }
-
-    .explanation {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 20px;
-    }
-
-    .explanation article {
-      padding: 15px 16px;
       border: 1px solid var(--line);
-      border-radius: 13px;
-      background: #fbfcfe;
+      border-radius: 11px;
+      background: var(--surface-2);
+      touch-action: none;
     }
-
-    .explanation h3 {
-      margin: 0 0 5px;
-      font-size: 0.92rem;
+    #geometryCanvas { aspect-ratio: 1.55; cursor: grab; }
+    #geometryCanvas.dragging { cursor: grabbing; }
+    #forceCanvas { aspect-ratio: 1.5; }
+    .canvas-caption { color: var(--muted); font-size: 11px; margin: 8px 2px 0; }
+    .controls { display: grid; align-content: start; gap: 18px; }
+    .control-group { display: grid; gap: 8px; }
+    .control-label {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 620;
     }
-
-    .explanation p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.84rem;
+    output, .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+    .control-label output { color: var(--green); font-size: 12px; }
+    input[type="range"] {
+      width: 100%;
+      height: 5px;
+      accent-color: var(--green);
+      cursor: pointer;
     }
+    .range-ends { display: flex; justify-content: space-between; color: var(--muted); font: 10px var(--mono); }
+    .hint { margin: -5px 0 0; font-size: 11px; color: var(--muted); }
+    .equations {
+      display: grid;
+      gap: 8px;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-2);
+    }
+    .equations h3, .readout h3 { margin: 0 0 2px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+    .equation { color: var(--ink); font: 11px/1.55 var(--mono); overflow-wrap: anywhere; }
+    .intersections { display: grid; gap: 6px; margin-top: 3px; }
+    .intersection-line { font: 10px/1.5 var(--mono); color: var(--muted); }
+    .intersection-line strong { color: var(--ink); font-weight: 500; }
+    .status { color: var(--green); }
+    .status.out { color: var(--orange); }
+    .readout {
+      padding: 13px 14px;
+      border-radius: 10px;
+      background: var(--green-soft);
+    }
+    .readout p { margin: 4px 0 0; font-size: 12px; }
+    .readout strong { color: var(--green); }
 
-    .note {
-      margin: 20px 0 0;
+    .force-layout { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 17px; }
+    .force-controls { display: grid; grid-template-columns: repeat(3, minmax(130px, 1fr)); gap: 16px 22px; margin-top: 22px; }
+    .grip-controls { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 15px 18px; margin-top: 22px; }
+    .wheel-control { display: grid; gap: 5px; }
+    .wheel-control .control-label { font-size: 11px; }
+    .ice-control {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 17px;
+      padding: 11px 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .ice-control input { accent-color: var(--blue); }
+    .ice-control span:last-child { color: var(--muted); font-size: 11px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 9px; color: var(--muted); font-size: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-swatch { width: 17px; height: 3px; border-radius: 4px; background: var(--green); }
+    .legend-swatch.qp { background: var(--orange); }
+    .legend-swatch.friction { height: 9px; width: 9px; border: 1px solid var(--blue); background: transparent; border-radius: 50%; }
+    .convergence {
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-2);
+    }
+    .convergence h3 { margin: 0; font-size: 12px; }
+    .convergence p { color: var(--muted); font-size: 10px; line-height: 1.5; margin: 4px 0 8px; }
+    #qpCanvas { height: 170px; aspect-ratio: auto; border: 0; background: transparent; }
+    .qp-metric { padding-top: 10px; border-top: 1px solid var(--line); display: grid; gap: 4px; }
+    .qp-metric div { display: flex; justify-content: space-between; gap: 8px; font-size: 10px; color: var(--muted); }
+    .qp-metric output { color: var(--ink); }
+    .explanation {
+      margin: 16px 0 0;
       padding: 13px 15px;
-      border-left: 3px solid var(--amber);
-      border-radius: 0 9px 9px 0;
-      background: #fff8e9;
-      color: #5c4a28;
-      font-size: 0.82rem;
-    }
-
-    footer {
-      margin-top: 24px;
+      border-left: 2px solid var(--green);
       color: var(--muted);
-      font-size: 0.83rem;
+      font-size: 12px;
     }
-
-    @media (max-width: 820px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .controls {
-        order: 1;
-      }
-
-      .surface-panel {
-        order: 2;
-      }
+    .explanation strong { color: var(--ink); }
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 28px 0 42px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
     }
-
-    @media (max-width: 560px) {
-      .page {
-        width: min(100% - 22px, 1180px);
-        padding-top: 22px;
-      }
-
-      .topline {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .controls,
-      .surface-panel {
-        padding: 17px;
-      }
-
-      canvas {
-        height: 310px;
-      }
-
-      .explanation {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 780px) {
+      .explorer-grid { grid-template-columns: 1fr; }
+      .controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .equations, .readout { grid-column: 1 / -1; }
+      .force-layout { grid-template-columns: 1fr; }
+      .convergence { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; }
+      .convergence h3, .convergence p { grid-column: 1 / -1; }
+      #qpCanvas { grid-row: span 2; }
+      .force-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grip-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-
+    @media (max-width: 500px) {
+      .page { width: min(100% - 24px, 1120px); }
+      .hero { padding: 48px 0 35px; }
+      .module { padding: 17px 14px; border-radius: 12px; }
+      .module-head { gap: 10px; }
+      .module-index { flex-basis: 32px; height: 32px; }
+      .complexity { font-size: 10px; padding: 4px 7px; }
+      .controls { grid-template-columns: 1fr 1fr; gap: 15px; }
+      #geometryCanvas { aspect-ratio: 1.15; }
+      #forceCanvas { aspect-ratio: 1.05; }
+      .convergence { grid-template-columns: 1fr; }
+      #qpCanvas { grid-row: auto; }
+      footer { flex-direction: column; }
+    }
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-      }
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <nav class="topline" aria-label="Project navigation">
-      <a href="https://github.com/mathiascar7/signed-connectome-topology">← Repository</a>
-      <span>Interactive methods explainer · V16 signed-connectome audit</span>
-    </nav>
-
-    <header>
-      <p class="eyebrow">Global state × local topology</p>
-      <h1>How the linear risk score conditions topological signal</h1>
-      <p class="lede">
-        Explore how a fold-local summary of 19,900 raw edges can provide a global state anchor for
-        LightGBM to interpret 1,000 higher-order connectome invariants.
-      </p>
-      <div class="benchmarks" aria-label="Audited cohort benchmarks">
-        <span class="benchmark">Flat L2 logistic ROC-AUC<strong>0.5381</strong></span>
-        <span class="benchmark">V16 nested-CV ROC-AUC<strong>0.7164</strong></span>
-        <span class="benchmark">V16 invariants<strong>1,000</strong></span>
-      </div>
+  <div class="page">
+    <header class="topbar">
+      <div class="wordmark"><span>FIELD NOTES</span> / ROBOTICS</div>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">◐ <span>Dark mode</span></button>
     </header>
 
-    <section class="layout" aria-label="Interactive state-conditioning explorer">
-      <aside class="panel controls">
-        <h2>Adjust network state</h2>
-        <p class="panel-intro">Move any slider to update the selected point and decision surface.</p>
-
-        <div class="control risk-control">
-          <label class="control-heading" for="linearScore">
-            <span>LINEAR_META_RISK_SCORE</span>
-            <output id="linearScoreValue" for="linearScore">0.42</output>
-          </label>
-          <input id="linearScore" type="range" min="0" max="1" step="0.01" value="0.42" aria-describedby="riskHelp">
-          <small id="riskHelp">Global linear state summary, scaled from 0 to 1.</small>
-        </div>
-
-        <div class="control deceleration-control">
-          <label class="control-heading" for="deceleration">
-            <span>Deceleration (Dᵢ)</span>
-            <output id="decelerationValue" for="deceleration">0.62</output>
-          </label>
-          <input id="deceleration" type="range" min="0" max="1" step="0.01" value="0.62" aria-describedby="decelerationHelp">
-          <small id="decelerationHelp">Normalized demonstration value; the audited marginal |d| is 0.0619.</small>
-        </div>
-
-        <div class="control frustration-control">
-          <label class="control-heading" for="frustration">
-            <span>Triadic Frustration (Fᵢ)</span>
-            <output id="frustrationValue" for="frustration">0.55</output>
-          </label>
-          <input id="frustration" type="range" min="0" max="1" step="0.01" value="0.55">
-        </div>
-
-        <div class="control sinkhole-control">
-          <label class="control-heading" for="sinkhole">
-            <span>Dead-End Crash (Sᵢ)</span>
-            <output id="sinkholeValue" for="sinkhole">0.38</output>
-          </label>
-          <input id="sinkhole" type="range" min="0" max="1" step="0.01" value="0.38">
-        </div>
-
-        <div class="readout" aria-live="polite">
-          <div class="score-row">
-            <span>Illustrative flat linear score</span>
-            <strong id="linearReadout">—</strong>
-            <div class="meter" role="meter" aria-label="Illustrative flat linear score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-              <span id="linearMeter"></span>
-            </div>
-          </div>
-          <div class="score-row">
-            <span>Illustrative state-conditioned score</span>
-            <strong id="conditionedReadout">—</strong>
-            <div class="meter" role="meter" aria-label="Illustrative state-conditioned score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-              <span id="conditionedMeter"></span>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <section class="panel surface-panel">
-        <div class="surface-header">
-          <div>
-            <h2>State-conditioned decision surface</h2>
-            <p>Current Frustration and Dead-End Crash settings shift the topological surface.</p>
-          </div>
-          <p>Color encodes illustrative relative score</p>
-        </div>
-        <div class="canvas-wrap">
-          <canvas id="surface" role="img" aria-label="Decision surface with linear threshold, nonlinear boundary, and selected state"></canvas>
-        </div>
-        <div class="legend" aria-label="Decision surface legend">
-          <span class="legend-item"><span class="key flat"></span>Flat linear threshold</span>
-          <span class="legend-item"><span class="key"></span>State-conditioned boundary</span>
-          <span class="legend-item"><span class="key point"></span>Selected state</span>
-        </div>
-        <div class="explanation">
-          <article>
-            <h3>Flat edge model</h3>
-            <p>One global score maps to one threshold, so localized circuit patterns do not change the boundary.</p>
-          </article>
-          <article>
-            <h3>Topology conditioned on state</h3>
-            <p>The same Deceleration value can contribute differently across global states, exposing nonlinear regimes.</p>
-          </article>
-        </div>
+    <main>
+      <section class="hero">
+        <div class="eyebrow">Interactive concept explorer · 01—02</div>
+        <h1>Geometry you can touch.<br>Control you can see.</h1>
+        <p>Two small experiments unpack the ideas behind this project: bounded line segments make collision geometry exact, while a closed-form force allocator respects each wheel's friction limit in one pass.</p>
+        <div class="hero-note"><span class="note-dot"></span><span>Move the robot, change the parameters, and watch the geometry respond.</span></div>
       </section>
-    </section>
 
-    <p class="note">
-      This is a conceptual interaction, not a trained subject-level predictor. Slider values are normalized for visualization;
-      the displayed ROC-AUC values are the reported cohort benchmarks from the audit.
-    </p>
+      <section class="module" aria-labelledby="geometryTitle">
+        <div class="module-head">
+          <div class="module-index">A</div>
+          <div class="module-title">
+            <h2 id="geometryTitle">Bounded lines, exact intersections</h2>
+            <p>AprilTag-derived tangent edges are finite segments—not occupied cells. Drag the square chassis or change its heading to inspect exact contacts.</p>
+          </div>
+          <div class="complexity">FIXED WORK / PAIR</div>
+        </div>
+        <div class="explorer-grid">
+          <div class="canvas-wrap">
+            <canvas id="geometryCanvas" aria-label="Interactive bounded-line collision geometry"></canvas>
+            <p class="canvas-caption">Drag the chassis to move it. The outline is 0.85 m × 0.85 m; highlighted points are segment intersections.</p>
+          </div>
+          <div class="controls">
+            <label class="control-group" for="heading">
+              <span class="control-label"><span>Chassis heading θ</span><output id="headingOut">18°</output></span>
+              <input id="heading" type="range" min="-180" max="180" value="18" step="1">
+              <span class="range-ends"><span>−180°</span><span>180°</span></span>
+            </label>
+            <p class="hint">Rotate the footprint while keeping its center fixed.</p>
+            <div class="equations">
+              <h3>Bounded tangent segments</h3>
+              <div id="equationList"></div>
+              <div class="intersections" id="intersectionList" aria-live="polite"></div>
+            </div>
+            <div class="readout" aria-live="polite">
+              <h3>Footprint check</h3>
+              <p id="collisionReadout">No segment contact.</p>
+            </div>
+          </div>
+        </div>
+        <p class="explanation"><strong>Why the bounds matter.</strong> Two line equations give a candidate vertex. It belongs to the mapped obstacle only when its x and y coordinates also satisfy both finite segment bounds. Collision checks then compare finite chassis and obstacle edges directly—no occupancy-grid sampling is involved.</p>
+      </section>
+
+      <section class="module" aria-labelledby="forceTitle">
+        <div class="module-head">
+          <div class="module-index">B</div>
+          <div class="module-title">
+            <h2 id="forceTitle">One-step allocation vs. iterative QP</h2>
+            <p>Set a desired body force and yaw moment. Every wheel has its own friction circle; compare the projected closed-form allocation with a projected-gradient QP trace.</p>
+          </div>
+          <div class="complexity">CLOSED FORM / QP</div>
+        </div>
+        <div class="force-layout">
+          <div class="canvas-wrap">
+            <canvas id="forceCanvas" aria-label="Four-wheel swerve force allocation and friction circles"></canvas>
+            <div class="legend" aria-label="Force vector legend">
+              <span class="legend-item"><span class="legend-swatch"></span>Closed-form resultant</span>
+              <span class="legend-item"><span class="legend-swatch qp"></span>QP iterate / result</span>
+              <span class="legend-item"><span class="legend-swatch friction"></span>Friction limit</span>
+            </div>
+          </div>
+          <aside class="convergence">
+            <h3>QP convergence trace</h3>
+            <p>Normalized command error by projected-gradient iteration. This trace is a teaching comparison, not a timing benchmark.</p>
+            <canvas id="qpCanvas" aria-label="Projected-gradient QP convergence plot"></canvas>
+            <div class="qp-metric">
+              <div><span>Iterations</span><output id="iterationOut">0</output></div>
+              <div><span>Final command error</span><output id="errorOut">0%</output></div>
+            </div>
+          </aside>
+        </div>
+        <div class="force-controls">
+          <label class="control-group" for="forceX">
+            <span class="control-label"><span>Command F<sub>b,x</sub></span><output id="forceXOut">500 N</output></span>
+            <input id="forceX" type="range" min="-1600" max="1600" value="500" step="25">
+            <span class="range-ends"><span>−1600 N</span><span>1600 N</span></span>
+          </label>
+          <label class="control-group" for="forceY">
+            <span class="control-label"><span>Command F<sub>b,y</sub></span><output id="forceYOut">250 N</output></span>
+            <input id="forceY" type="range" min="-1600" max="1600" value="250" step="25">
+            <span class="range-ends"><span>−1600 N</span><span>1600 N</span></span>
+          </label>
+          <label class="control-group" for="torque">
+            <span class="control-label"><span>Yaw moment T<sub>z</sub></span><output id="torqueOut">120 N·m</output></span>
+            <input id="torque" type="range" min="-900" max="900" value="120" step="15">
+            <span class="range-ends"><span>−900 N·m</span><span>900 N·m</span></span>
+          </label>
+        </div>
+        <div class="grip-controls" id="gripControls"></div>
+        <label class="ice-control" for="blackIce">
+          <input id="blackIce" type="checkbox">
+          <strong>Black Ice</strong>
+          <span>Reduce front-left grip to a low-friction patch.</span>
+        </label>
+        <p class="explanation"><strong>Reading the vectors.</strong> At each wheel, <span class="mono">F<sub>i</sub> = F<sub>t,i</sub> + F<sub>r,i</sub></span>: the closed-form step splits the command into translational and rotational contributions, then projects the resultant onto that wheel's friction circle. The QP trace repeatedly reduces body-force/moment error while respecting the same per-wheel circles. Under saturation, neither allocation can meet every requested component exactly.</p>
+      </section>
+    </main>
+
     <footer>
-      <a href="https://github.com/mathiascar7/signed-connectome-topology">View the repository and full audit</a>
+      <span>Interactive teaching aid · all calculations run locally in this page.</span>
+      <span>Concepts: bounded geometry · friction-limited force allocation</span>
     </footer>
-  </main>
+  </div>
 
   <script>
     (() => {
-      const inputs = {
-        risk: document.getElementById("linearScore"),
-        deceleration: document.getElementById("deceleration"),
-        frustration: document.getElementById("frustration"),
-        sinkhole: document.getElementById("sinkhole")
-      };
-      const outputs = {
-        risk: document.getElementById("linearScoreValue"),
-        deceleration: document.getElementById("decelerationValue"),
-        frustration: document.getElementById("frustrationValue"),
-        sinkhole: document.getElementById("sinkholeValue")
-      };
-      const canvas = document.getElementById("surface");
-      const context = canvas.getContext("2d");
-      const sigmoid = (x) => 1 / (1 + Math.exp(-x));
+      "use strict";
 
-      function values() {
+      const root = document.documentElement;
+      const themeButton = document.getElementById("themeToggle");
+      const storedTheme = localStorage.getItem("concept-explorer-theme");
+      if (storedTheme === "dark") root.dataset.theme = "dark";
+      themeButton.addEventListener("click", () => {
+        const dark = root.dataset.theme !== "dark";
+        if (dark) root.dataset.theme = "dark";
+        else delete root.dataset.theme;
+        localStorage.setItem("concept-explorer-theme", dark ? "dark" : "light");
+        drawGeometry();
+        drawForces();
+      });
+
+      const geometryCanvas = document.getElementById("geometryCanvas");
+      const gctx = geometryCanvas.getContext("2d");
+      const heading = document.getElementById("heading");
+      const headingOut = document.getElementById("headingOut");
+      const equationList = document.getElementById("equationList");
+      const intersectionList = document.getElementById("intersectionList");
+      const collisionReadout = document.getElementById("collisionReadout");
+      const geometrySegments = [
+        { name: "L₁", a: { x: 1.0, y: 1.0 }, b: { x: 2.5, y: 1.8 } },
+        { name: "L₂", a: { x: 2.5, y: 1.8 }, b: { x: 3.0, y: 0.8 } },
+        { name: "L₃", a: { x: 3.0, y: 0.8 }, b: { x: 1.0, y: 1.0 } }
+      ].map(segment => {
+        const m = (segment.b.y - segment.a.y) / (segment.b.x - segment.a.x);
+        const b = segment.a.y - m * segment.a.x;
         return {
-          risk: Number(inputs.risk.value),
-          deceleration: Number(inputs.deceleration.value),
-          frustration: Number(inputs.frustration.value),
-          sinkhole: Number(inputs.sinkhole.value)
+          ...segment, m, intercept: b,
+          xmin: Math.min(segment.a.x, segment.b.x), xmax: Math.max(segment.a.x, segment.b.x),
+          ymin: Math.min(segment.a.y, segment.b.y), ymax: Math.max(segment.a.y, segment.b.y)
+        };
+      });
+      let chassis = { x: 2.12, y: 0.9 };
+      let dragPointer = null;
+      const field = { width: 5.0, height: 3.0 };
+
+      equationList.innerHTML = geometrySegments.map(segment =>
+        `<div class="equation">${segment.name}: y = ${segment.m.toFixed(2)}x ${segment.intercept < 0 ? "−" : "+"} ${Math.abs(segment.intercept).toFixed(2)}<br> x ∈ [${segment.xmin.toFixed(2)}, ${segment.xmax.toFixed(2)}], y ∈ [${segment.ymin.toFixed(2)}, ${segment.ymax.toFixed(2)}]</div>`
+      ).join("");
+
+      function resizeCanvas(canvas, ctx) {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        const width = Math.max(1, Math.round(rect.width * dpr));
+        const height = Math.max(1, Math.round(rect.height * dpr));
+        if (canvas.width !== width || canvas.height !== height) {
+          canvas.width = width;
+          canvas.height = height;
+        }
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { width: rect.width, height: rect.height, dpr };
+      }
+
+      function geometryTransform(width, height) {
+        const scale = Math.min((width - 38) / field.width, (height - 36) / field.height);
+        const ox = (width - field.width * scale) / 2;
+        const oy = (height - field.height * scale) / 2;
+        return {
+          scale, ox, oy,
+          toScreen(point) { return { x: ox + point.x * scale, y: height - oy - point.y * scale }; },
+          toWorld(point) { return { x: (point.x - ox) / scale, y: (height - oy - point.y) / scale }; }
         };
       }
 
-      function linearScore(risk) {
-        return sigmoid(-1.35 + 2.7 * risk);
+      function cross(a, b) { return a.x * b.y - a.y * b.x; }
+      function segmentIntersection(a, b, c, d) {
+        const r = { x: b.x - a.x, y: b.y - a.y };
+        const s = { x: d.x - c.x, y: d.y - c.y };
+        const denominator = cross(r, s);
+        if (Math.abs(denominator) < 1e-10) return null;
+        const ca = { x: c.x - a.x, y: c.y - a.y };
+        const t = cross(ca, s) / denominator;
+        const u = cross(ca, r) / denominator;
+        if (t < -1e-9 || t > 1 + 1e-9 || u < -1e-9 || u > 1 + 1e-9) return null;
+        return { x: a.x + t * r.x, y: a.y + t * r.y };
       }
 
-      function conditionedScore(risk, deceleration, frustration, sinkhole) {
-        const stateGate = 0.25 + 0.75 * 4 * risk * (1 - risk);
-        const globalLogit = -1.35 + 2.7 * risk;
-        const topologyLogit = stateGate * (
-          1.35 * deceleration +
-          0.4 * (frustration - 0.5) +
-          0.4 * (sinkhole - 0.5) +
-          0.55 * deceleration * (frustration + sinkhole) / 2
+      function lineIntersection(first, second) {
+        const denominator = first.m - second.m;
+        const x = (second.intercept - first.intercept) / denominator;
+        const y = first.m * x + first.intercept;
+        const inBounds = [first, second].every(line =>
+          x >= line.xmin - 1e-8 && x <= line.xmax + 1e-8 &&
+          y >= line.ymin - 1e-8 && y <= line.ymax + 1e-8
         );
-        return sigmoid(globalLogit + topologyLogit);
+        return { x, y, inBounds };
       }
 
-      function colorFor(score) {
-        const stops = [
-          [0.00, [230, 239, 249]],
-          [0.35, [107, 165, 190]],
-          [0.55, [57, 153, 139]],
-          [0.75, [241, 190, 92]],
-          [1.00, [212, 105, 88]]
-        ];
-        let left = stops[0];
-        let right = stops[stops.length - 1];
-        for (let i = 1; i < stops.length; i += 1) {
-          if (score <= stops[i][0]) {
-            left = stops[i - 1];
-            right = stops[i];
-            break;
-          }
-        }
-        const amount = Math.max(0, Math.min(1, (score - left[0]) / (right[0] - left[0])));
-        const rgb = left[1].map((channel, index) => Math.round(channel + (right[1][index] - channel) * amount));
-        return `rgb(${rgb.join(",")})`;
+      function footprint() {
+        const theta = Number(heading.value) * Math.PI / 180;
+        const half = .425;
+        return [[-half, -half], [half, -half], [half, half], [-half, half]].map(([x, y]) => ({
+          x: chassis.x + x * Math.cos(theta) - y * Math.sin(theta),
+          y: chassis.y + x * Math.sin(theta) + y * Math.cos(theta)
+        }));
       }
 
-      function drawSurface(current) {
-        const bounds = canvas.getBoundingClientRect();
-        const ratio = window.devicePixelRatio || 1;
-        canvas.width = Math.round(bounds.width * ratio);
-        canvas.height = Math.round(bounds.height * ratio);
-        context.setTransform(ratio, 0, 0, ratio, 0, 0);
-
-        const width = bounds.width;
-        const height = bounds.height;
-        const plot = { left: 58, top: 18, right: width - 18, bottom: height - 50 };
-        const plotWidth = plot.right - plot.left;
-        const plotHeight = plot.bottom - plot.top;
-        context.clearRect(0, 0, width, height);
-
-        const columns = Math.max(45, Math.floor(plotWidth / 10));
-        const rows = Math.max(24, Math.floor(plotHeight / 10));
-        for (let row = 0; row < rows; row += 1) {
-          const deceleration = 1 - (row + 0.5) / rows;
-          for (let column = 0; column < columns; column += 1) {
-            const risk = (column + 0.5) / columns;
-            const score = conditionedScore(risk, deceleration, current.frustration, current.sinkhole);
-            const cellWidth = plotWidth / columns;
-            const cellHeight = plotHeight / rows;
-            context.fillStyle = colorFor(score);
-            context.fillRect(
-              plot.left + column * cellWidth,
-              plot.top + row * cellHeight,
-              cellWidth + 0.6,
-              cellHeight + 0.6
-            );
-          }
+      function pointInPolygon(point, polygon) {
+        let inside = false;
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+          const a = polygon[i], b = polygon[j];
+          if ((a.y > point.y) !== (b.y > point.y) &&
+              point.x < (b.x - a.x) * (point.y - a.y) / (b.y - a.y) + a.x) inside = !inside;
         }
-
-        context.strokeStyle = "rgba(255,255,255,0.48)";
-        context.lineWidth = 1;
-        for (let tick = 0; tick <= 4; tick += 1) {
-          const x = plot.left + plotWidth * tick / 4;
-          const y = plot.top + plotHeight * tick / 4;
-          context.beginPath();
-          context.moveTo(x, plot.top);
-          context.lineTo(x, plot.bottom);
-          context.stroke();
-          context.beginPath();
-          context.moveTo(plot.left, y);
-          context.lineTo(plot.right, y);
-          context.stroke();
-        }
-
-        const flatX = plot.left + plotWidth * 0.5;
-        context.save();
-        context.setLineDash([7, 5]);
-        context.strokeStyle = "#26384e";
-        context.lineWidth = 2;
-        context.beginPath();
-        context.moveTo(flatX, plot.top);
-        context.lineTo(flatX, plot.bottom);
-        context.stroke();
-        context.restore();
-
-        context.save();
-        context.strokeStyle = "#ffffff";
-        context.lineWidth = 3;
-        context.shadowColor = "rgba(20,35,55,0.75)";
-        context.shadowBlur = 4;
-        context.beginPath();
-        let active = false;
-        for (let step = 0; step <= 100; step += 1) {
-          const deceleration = step / 100;
-          let low = 0;
-          let high = 1;
-          if (conditionedScore(low, deceleration, current.frustration, current.sinkhole) >= 0.5 ||
-              conditionedScore(high, deceleration, current.frustration, current.sinkhole) < 0.5) {
-            active = false;
-            continue;
-          }
-          for (let iteration = 0; iteration < 24; iteration += 1) {
-            const middle = (low + high) / 2;
-            if (conditionedScore(middle, deceleration, current.frustration, current.sinkhole) >= 0.5) {
-              high = middle;
-            } else {
-              low = middle;
-            }
-          }
-          const x = plot.left + plotWidth * (low + high) / 2;
-          const y = plot.bottom - plotHeight * deceleration;
-          if (active) {
-            context.lineTo(x, y);
-          } else {
-            context.moveTo(x, y);
-            active = true;
-          }
-        }
-        context.stroke();
-        context.restore();
-
-        const selectedX = plot.left + plotWidth * current.risk;
-        const selectedY = plot.bottom - plotHeight * current.deceleration;
-        context.beginPath();
-        context.arc(selectedX, selectedY, 7, 0, Math.PI * 2);
-        context.fillStyle = "#17263d";
-        context.fill();
-        context.lineWidth = 2.5;
-        context.strokeStyle = "#fff";
-        context.stroke();
-
-        context.fillStyle = "#24364d";
-        context.font = "12px system-ui, sans-serif";
-        context.textAlign = "center";
-        for (let tick = 0; tick <= 4; tick += 1) {
-          const value = tick / 4;
-          const x = plot.left + plotWidth * value;
-          const y = plot.bottom + 18;
-          context.fillText(value.toFixed(value === 0 || value === 1 ? 0 : 2), x, y);
-        }
-        context.textAlign = "left";
-        context.fillText("Global linear state", plot.left, height - 8);
-        context.save();
-        context.translate(15, plot.top + plotHeight / 2);
-        context.rotate(-Math.PI / 2);
-        context.textAlign = "center";
-        context.fillText("Normalized Deceleration (Dᵢ)", 0, 0);
-        context.restore();
-        context.textAlign = "right";
-        context.fillText("1", plot.left - 10, plot.top + 4);
-        context.fillText("0", plot.left - 10, plot.bottom + 4);
+        return inside;
       }
 
-      function update() {
-        const current = values();
-        Object.keys(inputs).forEach((key) => {
-          outputs[key].value = current[key].toFixed(2);
-          outputs[key].textContent = current[key].toFixed(2);
+      function drawGeometry() {
+        const { width, height } = resizeCanvas(geometryCanvas, gctx);
+        const ctx = gctx;
+        const transform = geometryTransform(width, height);
+        const polygon = geometrySegments.map(segment => segment.a);
+        const box = footprint();
+        const impacts = [];
+        for (let i = 0; i < box.length; i++) {
+          const start = box[i], end = box[(i + 1) % box.length];
+          geometrySegments.forEach((segment, segmentIndex) => {
+            const point = segmentIntersection(start, end, segment.a, segment.b);
+            if (point) impacts.push({ ...point, segmentIndex });
+          });
+        }
+        const overlap = impacts.length > 0 ||
+          box.some(point => pointInPolygon(point, polygon)) ||
+          polygon.some(point => pointInPolygon(point, box));
+        const style = getComputedStyle(root);
+        const ink = style.getPropertyValue("--ink").trim();
+        const muted = style.getPropertyValue("--muted").trim();
+        const line = style.getPropertyValue("--line").trim();
+        const green = style.getPropertyValue("--green").trim();
+        const red = style.getPropertyValue("--red").trim();
+        ctx.clearRect(0, 0, width, height);
+
+        const origin = transform.toScreen({ x: 0, y: 0 });
+        const xEnd = transform.toScreen({ x: field.width, y: 0 });
+        const yEnd = transform.toScreen({ x: 0, y: field.height });
+        ctx.strokeStyle = line;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(xEnd.x, xEnd.y);
+        ctx.moveTo(origin.x, origin.y); ctx.lineTo(yEnd.x, yEnd.y); ctx.stroke();
+        ctx.fillStyle = muted;
+        ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+        ctx.fillText("x (m)", xEnd.x - 29, xEnd.y - 7);
+        ctx.fillText("y (m)", yEnd.x + 7, yEnd.y + 10);
+
+        ctx.beginPath();
+        polygon.forEach((point, index) => {
+          const p = transform.toScreen(point);
+          if (index === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        });
+        ctx.closePath();
+        ctx.fillStyle = overlap ? "rgba(217,77,77,.10)" : "rgba(24,123,90,.09)";
+        ctx.fill();
+        ctx.strokeStyle = overlap ? red : green;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        geometrySegments.forEach((segment, index) => {
+          const a = transform.toScreen(segment.a), b = transform.toScreen(segment.b);
+          ctx.setLineDash(index === 1 ? [5, 4] : []);
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = green;
+          ctx.beginPath(); ctx.arc(a.x, a.y, 3.2, 0, Math.PI * 2); ctx.fill();
         });
 
-        const baseline = linearScore(current.risk);
-        const conditioned = conditionedScore(
-          current.risk,
-          current.deceleration,
-          current.frustration,
-          current.sinkhole
-        );
-        document.getElementById("linearReadout").textContent = baseline.toFixed(3);
-        document.getElementById("conditionedReadout").textContent = conditioned.toFixed(3);
-        document.getElementById("linearMeter").style.width = `${baseline * 100}%`;
-        document.getElementById("conditionedMeter").style.width = `${conditioned * 100}%`;
-        document.querySelector('[aria-label="Illustrative flat linear score"]').setAttribute("aria-valuenow", String(Math.round(baseline * 100)));
-        document.querySelector('[aria-label="Illustrative state-conditioned score"]').setAttribute("aria-valuenow", String(Math.round(conditioned * 100)));
-        drawSurface(current);
+        ctx.beginPath();
+        box.forEach((point, index) => {
+          const p = transform.toScreen(point);
+          if (index === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        });
+        ctx.closePath();
+        ctx.fillStyle = overlap ? "rgba(217,77,77,.13)" : "rgba(71,117,184,.12)";
+        ctx.fill();
+        ctx.strokeStyle = overlap ? red : style.getPropertyValue("--blue").trim();
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        const center = transform.toScreen(chassis);
+        ctx.fillStyle = ink;
+        ctx.beginPath(); ctx.arc(center.x, center.y, 3, 0, Math.PI * 2); ctx.fill();
+        const front = transform.toScreen({
+          x: chassis.x + .39 * Math.cos(Number(heading.value) * Math.PI / 180),
+          y: chassis.y + .39 * Math.sin(Number(heading.value) * Math.PI / 180)
+        });
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(center.x, center.y); ctx.lineTo(front.x, front.y); ctx.stroke();
+
+        impacts.forEach(point => {
+          const p = transform.toScreen(point);
+          ctx.fillStyle = red;
+          ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = style.getPropertyValue("--surface").trim();
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+
+        const pairs = [[0, 1], [1, 2], [2, 0]];
+        intersectionList.innerHTML = pairs.map(([firstIndex, secondIndex]) => {
+          const first = geometrySegments[firstIndex], second = geometrySegments[secondIndex];
+          const hit = lineIntersection(first, second);
+          const label = `${first.name} ∩ ${second.name}`;
+          return `<div class="intersection-line"><strong>${label}</strong> = (${hit.x.toFixed(2)}, ${hit.y.toFixed(2)}) m · <span class="status ${hit.inBounds ? "" : "out"}">${hit.inBounds ? "inside both bounds" : "outside bounds"}</span></div>`;
+        }).join("");
+        headingOut.value = `${heading.value}°`;
+        collisionReadout.innerHTML = overlap
+          ? `<strong>Contact / overlap detected.</strong> ${impacts.length} exact edge intersection${impacts.length === 1 ? "" : "s"}${impacts.length ? ` at ${impacts.map(point => `(${point.x.toFixed(2)}, ${point.y.toFixed(2)}) m`).join("; ")}` : " (one shape contains the other)." }`
+          : `<strong>Clear.</strong> No chassis edge intersects any bounded obstacle segment.`;
       }
 
-      Object.values(inputs).forEach((input) => input.addEventListener("input", update));
-      window.addEventListener("resize", update);
-      update();
+      function pointerPosition(event, canvas) {
+        const rect = canvas.getBoundingClientRect();
+        return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      }
+      geometryCanvas.addEventListener("pointerdown", event => {
+        const { width, height } = resizeCanvas(geometryCanvas, gctx);
+        const point = pointerPosition(event, geometryCanvas);
+        const center = geometryTransform(width, height).toScreen(chassis);
+        if (Math.hypot(point.x - center.x, point.y - center.y) < 42) {
+          dragPointer = event.pointerId;
+          geometryCanvas.classList.add("dragging");
+          geometryCanvas.setPointerCapture(event.pointerId);
+        }
+      });
+      geometryCanvas.addEventListener("pointermove", event => {
+        if (dragPointer !== event.pointerId) return;
+        const { width, height } = resizeCanvas(geometryCanvas, gctx);
+        const position = pointerPosition(event, geometryCanvas);
+        const world = geometryTransform(width, height).toWorld(position);
+        chassis.x = Math.max(.45, Math.min(field.width - .45, world.x));
+        chassis.y = Math.max(.45, Math.min(field.height - .45, world.y));
+        drawGeometry();
+      });
+      geometryCanvas.addEventListener("pointerup", event => {
+        if (dragPointer === event.pointerId) {
+          dragPointer = null;
+          geometryCanvas.classList.remove("dragging");
+        }
+      });
+      heading.addEventListener("input", drawGeometry);
+
+      const forceCanvas = document.getElementById("forceCanvas");
+      const fctx = forceCanvas.getContext("2d");
+      const qpCanvas = document.getElementById("qpCanvas");
+      const qctx = qpCanvas.getContext("2d");
+      const forceX = document.getElementById("forceX");
+      const forceY = document.getElementById("forceY");
+      const torque = document.getElementById("torque");
+      const blackIce = document.getElementById("blackIce");
+      const forceXOut = document.getElementById("forceXOut");
+      const forceYOut = document.getElementById("forceYOut");
+      const torqueOut = document.getElementById("torqueOut");
+      const gripControls = document.getElementById("gripControls");
+      const wheelNames = ["Front left", "Front right", "Rear left", "Rear right"];
+      const wheelOffsets = [
+        { x: -.38, y: .38 }, { x: .38, y: .38 },
+        { x: -.38, y: -.38 }, { x: .38, y: -.38 }
+      ];
+      const grips = [1, 1, 1, 1];
+      gripControls.innerHTML = wheelNames.map((name, index) =>
+        `<label class="wheel-control" for="grip${index}"><span class="control-label"><span>${name} grip</span><output id="grip${index}Out">1.00</output></span><input id="grip${index}" type="range" min="0.15" max="1" value="1" step="0.05"></label>`
+      ).join("");
+      wheelNames.forEach((_, index) => {
+        const slider = document.getElementById(`grip${index}`);
+        slider.addEventListener("input", () => {
+          grips[index] = Number(slider.value);
+          document.getElementById(`grip${index}Out`).value = grips[index].toFixed(2);
+          drawForces();
+        });
+      });
+      [forceX, forceY, torque].forEach(input => input.addEventListener("input", drawForces));
+      blackIce.addEventListener("change", drawForces);
+
+      function project(vector, radius) {
+        const magnitude = Math.hypot(vector.x, vector.y);
+        if (magnitude <= radius || magnitude === 0) return { x: vector.x, y: vector.y };
+        return { x: vector.x * radius / magnitude, y: vector.y * radius / magnitude };
+      }
+
+      function generalized(forces, radius) {
+        let fx = 0, fy = 0, moment = 0;
+        forces.forEach((force, index) => {
+          const wheel = wheelOffsets[index];
+          fx += force.x; fy += force.y;
+          moment += -wheel.y * force.x + wheel.x * force.y;
+        });
+        return { x: fx, y: fy, z: moment / radius };
+      }
+
+      function solveAllocation(target, limits, radius) {
+        const translation = { x: target.x / 4, y: target.y / 4 };
+        const closed = wheelOffsets.map((wheel, index) => project({
+          x: translation.x - target.z * wheel.y / (4 * radius),
+          y: translation.y + target.z * wheel.x / (4 * radius)
+        }, limits[index]));
+
+        let forces = wheelOffsets.map(() => ({ x: 0, y: 0 }));
+        const trace = [];
+        const initialNorm = Math.max(1e-9, Math.hypot(target.x, target.y, target.z));
+        const iterations = 48;
+        for (let step = 0; step <= iterations; step++) {
+          const achieved = generalized(forces, radius);
+          const residual = { x: achieved.x - target.x, y: achieved.y - target.y, z: achieved.z - target.z };
+          trace.push(Math.hypot(residual.x, residual.y, residual.z) / initialNorm);
+          if (step === iterations) break;
+          forces = forces.map((force, index) => {
+            const wheel = wheelOffsets[index];
+            const gradient = {
+              x: residual.x - wheel.y * residual.z / radius,
+              y: residual.y + wheel.x * residual.z / radius
+            };
+            return project({ x: force.x - .24 * gradient.x, y: force.y - .24 * gradient.y }, limits[index]);
+          });
+        }
+        return { closed, qp: forces, trace };
+      }
+
+      function drawArrow(ctx, x, y, dx, dy, color, width, dashed) {
+        if (Math.hypot(dx, dy) < .7) return;
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = width;
+        ctx.setLineDash(dashed ? [4, 3] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + dx, y + dy); ctx.stroke();
+        ctx.setLineDash([]);
+        const angle = Math.atan2(dy, dx);
+        const size = 5 + width;
+        ctx.beginPath();
+        ctx.moveTo(x + dx, y + dy);
+        ctx.lineTo(x + dx - size * Math.cos(angle - .48), y + dy - size * Math.sin(angle - .48));
+        ctx.lineTo(x + dx - size * Math.cos(angle + .48), y + dy - size * Math.sin(angle + .48));
+        ctx.closePath(); ctx.fill();
+        ctx.restore();
+      }
+
+      function drawForces() {
+        const command = { x: Number(forceX.value), y: Number(forceY.value), z: Number(torque.value) };
+        const mu = grips.map((grip, index) => blackIce.checked && index === 0 ? .15 : grip);
+        const limits = mu.map(value => value * 500);
+        const radius = Math.hypot(.38, .38);
+        const allocations = solveAllocation(command, limits, radius);
+        forceXOut.value = `${command.x} N`;
+        forceYOut.value = `${command.y} N`;
+        torqueOut.value = `${command.z} N·m`;
+
+        const { width, height } = resizeCanvas(forceCanvas, fctx);
+        const ctx = fctx;
+        const style = getComputedStyle(root);
+        const ink = style.getPropertyValue("--ink").trim();
+        const muted = style.getPropertyValue("--muted").trim();
+        const line = style.getPropertyValue("--line").trim();
+        const green = style.getPropertyValue("--green").trim();
+        const orange = style.getPropertyValue("--orange").trim();
+        const blue = style.getPropertyValue("--blue").trim();
+        const red = style.getPropertyValue("--red").trim();
+        ctx.clearRect(0, 0, width, height);
+        const scale = Math.min((width - 72) / 2.1, (height - 72) / 1.85);
+        const center = { x: width * .48, y: height * .53 };
+        const toCanvas = (point) => ({ x: center.x + point.x * scale, y: center.y - point.y * scale });
+        const robotWidth = .98 * scale, robotHeight = .98 * scale;
+        ctx.fillStyle = style.getPropertyValue("--surface").trim();
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(center.x - robotWidth / 2, center.y - robotHeight / 2, robotWidth, robotHeight, 13);
+        ctx.fill(); ctx.stroke();
+        ctx.fillStyle = muted;
+        ctx.font = `10px ${getComputedStyle(document.body).fontFamily}`;
+        ctx.textAlign = "center";
+        ctx.fillText("swerve chassis · 4 contact patches", center.x, center.y + 4);
+        ctx.textAlign = "left";
+        const vectorScale = .085;
+        const wheelCenters = wheelOffsets.map(toCanvas);
+        wheelCenters.forEach((point, index) => {
+          const limitRadius = limits[index] * vectorScale;
+          ctx.beginPath(); ctx.arc(point.x, point.y, limitRadius, 0, Math.PI * 2);
+          ctx.fillStyle = blackIce.checked && index === 0 ? "rgba(217,77,77,.10)" : "rgba(71,117,184,.07)";
+          ctx.fill();
+          ctx.strokeStyle = blackIce.checked && index === 0 ? red : blue;
+          ctx.lineWidth = 1.25;
+          ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
+          const tireW = 16, tireH = 22;
+          ctx.fillStyle = style.getPropertyValue("--surface").trim();
+          ctx.strokeStyle = ink;
+          ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.roundRect(point.x - tireW / 2, point.y - tireH / 2, tireW, tireH, 4);
+          ctx.fill(); ctx.stroke();
+
+          const closed = allocations.closed[index];
+          const qp = allocations.qp[index];
+          const drawFactor = vectorScale;
+          drawArrow(ctx, point.x, point.y, closed.x * drawFactor, -closed.y * drawFactor, green, 2.7, false);
+          drawArrow(ctx, point.x, point.y, qp.x * drawFactor, -qp.y * drawFactor, orange, 1.8, true);
+        });
+        ctx.textAlign = "center";
+        ctx.fillStyle = muted;
+        ctx.font = `10px ${getComputedStyle(document.body).fontFamily}`;
+        ctx.fillText("front", center.x, center.y - robotHeight / 2 - 14);
+        ctx.fillText("rear", center.x, center.y + robotHeight / 2 + 19);
+        ctx.textAlign = "left";
+
+        const achieved = generalized(allocations.qp, radius);
+        const normalizedError = Math.hypot(achieved.x - command.x, achieved.y - command.y, achieved.z - command.z) /
+          Math.max(1e-9, Math.hypot(command.x, command.y, command.z));
+        document.getElementById("iterationOut").value = String(allocations.trace.length - 1);
+        document.getElementById("errorOut").value = `${(normalizedError * 100).toFixed(1)}%`;
+        drawConvergence(allocations.trace);
+      }
+
+      function drawConvergence(trace) {
+        const { width, height } = resizeCanvas(qpCanvas, qctx);
+        const ctx = qctx;
+        const style = getComputedStyle(root);
+        const muted = style.getPropertyValue("--muted").trim();
+        const line = style.getPropertyValue("--line").trim();
+        const orange = style.getPropertyValue("--orange").trim();
+        ctx.clearRect(0, 0, width, height);
+        const pad = { left: 31, right: 8, top: 10, bottom: 23 };
+        const plotW = width - pad.left - pad.right;
+        const plotH = height - pad.top - pad.bottom;
+        const maxLog = 0;
+        const minLog = -3;
+        const yFor = value => pad.top + (maxLog - Math.max(minLog, Math.log10(Math.max(value, 1e-3)))) / (maxLog - minLog) * plotH;
+        ctx.strokeStyle = line;
+        ctx.fillStyle = muted;
+        ctx.lineWidth = 1;
+        ctx.font = "9px " + getComputedStyle(document.body).fontFamily;
+        ctx.textAlign = "right";
+        [1, .1, .01, .001].forEach(value => {
+          const y = yFor(value);
+          ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(width - pad.right, y); ctx.stroke();
+          ctx.fillText(value >= .01 ? `${value * 100}%` : "0.1%", pad.left - 5, y + 3);
+        });
+        ctx.textAlign = "center";
+        ctx.fillText("iteration", pad.left + plotW / 2, height - 3);
+        ctx.strokeStyle = orange;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        trace.forEach((value, index) => {
+          const x = pad.left + index / Math.max(1, trace.length - 1) * plotW;
+          const y = yFor(value);
+          if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        const finalY = yFor(trace[trace.length - 1]);
+        ctx.fillStyle = orange;
+        ctx.beginPath(); ctx.arc(width - pad.right, finalY, 3, 0, Math.PI * 2); ctx.fill();
+      }
+
+      function redraw() {
+        drawGeometry();
+        drawForces();
+      }
+      window.addEventListener("resize", redraw);
+      drawGeometry();
+      drawForces();
     })();
   </script>
 </body>
