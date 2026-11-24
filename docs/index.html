@@ -346,12 +346,12 @@
             </div>
           </div>
           <aside class="convergence">
-            <h3>QP convergence trace</h3>
-            <p>Normalized command error by projected-gradient iteration. This trace is a teaching comparison, not a timing benchmark.</p>
-            <canvas id="qpCanvas" aria-label="Projected-gradient QP convergence plot"></canvas>
+            <h3>Command error &amp; convergence</h3>
+            <p>Closed-form O(1) error (dashed green) vs. projected-gradient QP iterations (orange). Teaching comparison, not a timing benchmark.</p>
+            <canvas id="qpCanvas" aria-label="Closed-form vs. projected-gradient QP convergence plot"></canvas>
             <div class="qp-metric">
-              <div><span>Iterations</span><output id="iterationOut">0</output></div>
-              <div><span>Final command error</span><output id="errorOut">0%</output></div>
+              <div><span>Closed-form (1 step)</span><output id="closedErrorOut" style="color: var(--green);">0.0%</output></div>
+              <div><span>QP (<span id="iterationOut">48</span> iters)</span><output id="errorOut" style="color: var(--orange);">0.0%</output></div>
             </div>
           </aside>
         </div>
@@ -794,20 +794,24 @@
         ctx.fillText("rear", center.x, center.y + robotHeight / 2 + 19);
         ctx.textAlign = "left";
 
+        const initialNorm = Math.max(1e-9, Math.hypot(command.x, command.y, command.z));
+        const achievedClosed = generalized(allocations.closed, radius);
+        const closedError = Math.hypot(achievedClosed.x - command.x, achievedClosed.y - command.y, achievedClosed.z - command.z) / initialNorm;
         const achieved = generalized(allocations.qp, radius);
-        const normalizedError = Math.hypot(achieved.x - command.x, achieved.y - command.y, achieved.z - command.z) /
-          Math.max(1e-9, Math.hypot(command.x, command.y, command.z));
-        document.getElementById("iterationOut").value = String(allocations.trace.length - 1);
+        const normalizedError = Math.hypot(achieved.x - command.x, achieved.y - command.y, achieved.z - command.z) / initialNorm;
+        document.getElementById("iterationOut").textContent = String(allocations.trace.length - 1);
+        document.getElementById("closedErrorOut").value = `${(closedError * 100).toFixed(1)}%`;
         document.getElementById("errorOut").value = `${(normalizedError * 100).toFixed(1)}%`;
-        drawConvergence(allocations.trace);
+        drawConvergence(allocations.trace, closedError);
       }
 
-      function drawConvergence(trace) {
+      function drawConvergence(trace, closedError) {
         const { width, height } = resizeCanvas(qpCanvas, qctx);
         const ctx = qctx;
         const style = getComputedStyle(root);
         const muted = style.getPropertyValue("--muted").trim();
         const line = style.getPropertyValue("--line").trim();
+        const green = style.getPropertyValue("--green").trim();
         const orange = style.getPropertyValue("--orange").trim();
         ctx.clearRect(0, 0, width, height);
         const pad = { left: 31, right: 8, top: 10, bottom: 23 };
@@ -828,6 +832,23 @@
         });
         ctx.textAlign = "center";
         ctx.fillText("iteration", pad.left + plotW / 2, height - 3);
+
+        const closedY = yFor(closedError);
+        ctx.save();
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 1.75;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, closedY);
+        ctx.lineTo(width - pad.right, closedY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = green;
+        ctx.beginPath();
+        ctx.arc(pad.left, closedY, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
         ctx.strokeStyle = orange;
         ctx.lineWidth = 2;
         ctx.beginPath();
