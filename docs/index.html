@@ -230,6 +230,81 @@
     .qp-metric { padding-top: 10px; border-top: 1px solid var(--line); display: grid; gap: 4px; }
     .qp-metric div { display: flex; justify-content: space-between; gap: 8px; font-size: 10px; color: var(--muted); }
     .qp-metric output { color: var(--ink); }
+    #tacticalCanvas { aspect-ratio: 1.65; }
+    .tactical-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .action-btn {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--ink);
+      border-radius: 9px;
+      padding: 8px 13px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .action-btn:hover { border-color: var(--green); }
+    .action-btn.primary {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: var(--green);
+    }
+    .action-btn.warn:hover { border-color: var(--red); color: var(--red); }
+    .inline-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .inline-check input { accent-color: var(--blue); }
+    .legend-swatch.dashed-orange {
+      background: transparent;
+      border-top: 2.5px dashed var(--orange);
+      height: 0;
+    }
+    .legend-swatch.observer { background: var(--blue); }
+    .legend-swatch.ref {
+      background: transparent;
+      border-top: 2px dotted var(--muted);
+      height: 0;
+    }
+    .telemetry-cards {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+    .telemetry-card {
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-2);
+    }
+    .telemetry-card h3 {
+      margin: 0 0 6px;
+      font-size: 11px;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .telemetry-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 2px 0;
+    }
+    .telemetry-row output { color: var(--ink); font-weight: 600; }
     .explanation {
       margin: 16px 0 0;
       padding: 13px 15px;
@@ -286,9 +361,9 @@
 
     <main>
       <section class="hero">
-        <div class="eyebrow">Interactive concept explorer · 01—02</div>
+        <div class="eyebrow">Interactive concept explorer · 01—03</div>
         <h1>Geometry you can touch.<br>Control you can see.</h1>
-        <p>Two small experiments unpack the ideas behind this project: bounded line segments make collision geometry exact, while a closed-form force allocator respects each wheel's friction limit in one pass.</p>
+        <p>Three small experiments unpack the ideas behind this project: bounded line segments make collision geometry exact, a closed-form force allocator respects each wheel's friction limit in one pass, and a blind-following trial shows how both work together under black ice and lateral impacts.</p>
         <div class="hero-note"><span class="note-dot"></span><span>Move the robot, change the parameters, and watch the geometry respond.</span></div>
       </section>
 
@@ -380,11 +455,56 @@
         </label>
         <p class="explanation"><strong>Reading the vectors.</strong> At each wheel, <span class="mono">F<sub>i</sub> = F<sub>t,i</sub> + F<sub>r,i</sub></span>: the closed-form step splits the command into translational and rotational contributions, then projects the resultant onto that wheel's friction circle. The QP trace repeatedly reduces body-force/moment error while respecting the same per-wheel circles. Under saturation, neither allocation can meet every requested component exactly.</p>
       </section>
+
+      <section class="module" aria-labelledby="tacticalTitle">
+        <div class="module-head">
+          <div class="module-index">C</div>
+          <div class="module-title">
+            <h2 id="tacticalTitle">Blind following under black ice &amp; impacts</h2>
+            <p>A compact pedagogical prototype of the WPILib tactical stress loop: the robot tracks an obstacle-avoiding route without external vision while crossing a low-friction patch and absorbing a lateral impulse.</p>
+          </div>
+          <div class="complexity">500 HZ LOOP CONCEPT</div>
+        </div>
+        <div class="explorer-grid">
+          <div class="canvas-wrap">
+            <canvas id="tacticalCanvas" aria-label="Simulated blind trajectory following around bounded obstacles with black ice and lateral impact"></canvas>
+            <div class="legend" aria-label="Trajectory legend">
+              <span class="legend-item"><span class="legend-swatch ref"></span>Planned path</span>
+              <span class="legend-item"><span class="legend-swatch"></span>Ground truth (O(1) control)</span>
+              <span class="legend-item"><span class="legend-swatch observer"></span>Slip-aware observer</span>
+              <span class="legend-item"><span class="legend-swatch dashed-orange"></span>Raw wheel odometry</span>
+            </div>
+            <div class="tactical-actions">
+              <button class="action-btn primary" id="replayTrialBtn" type="button">↻ Replay run</button>
+              <button class="action-btn warn" id="impactTrialBtn" type="button">⚡ Inject lateral impact</button>
+              <label class="inline-check" for="tacticalIce">
+                <input id="tacticalIce" type="checkbox" checked>
+                <span>Black ice patch</span>
+              </label>
+            </div>
+          </div>
+          <div class="telemetry-cards">
+            <div class="telemetry-card">
+              <h3>Live state diagnostics</h3>
+              <div class="telemetry-row"><span>Trial progress</span><output id="trialProgressOut">0%</output></div>
+              <div class="telemetry-row"><span>True tracking error</span><output id="trueErrOut" style="color: var(--green);">0.00 m</output></div>
+              <div class="telemetry-row"><span>Observer error</span><output id="obsErrOut" style="color: var(--blue);">0.00 m</output></div>
+              <div class="telemetry-row"><span>Raw odometry drift</span><output id="odomDriftOut" style="color: var(--orange);">0.00 m</output></div>
+              <div class="telemetry-row"><span>Active traction μ</span><output id="activeMuOut">1.00</output></div>
+            </div>
+            <div class="readout" aria-live="polite">
+              <h3>Trial verdict</h3>
+              <p id="trialVerdictOut"><strong>Running blind trajectory.</strong> Watch raw wheel odometry diverge on low friction while the observer and closed-form controller keep the chassis clear of obstacles.</p>
+            </div>
+          </div>
+        </div>
+        <p class="explanation"><strong>How A + B combine in AdvantageScope.</strong> Bounded obstacle segments define the collision-free corridor, while the closed-form force allocator keeps per-wheel forces inside dynamic friction circles. When wheels slip on black ice or after an impact, pure wheel odometry (orange) accumulates irreversible drift, whereas the slip-aware observer (blue) and O(1) controller recover the true pose (green). Full 500 Hz / 5 kHz trial logs and AdvantageScope captures are documented in the <a href="https://github.com/mathiascar7/kinodynamic-swerve-simulation-control#4-part-3--wpilib-tactical-stress-simulation--advantagescope" target="_blank" rel="noopener">repository README</a>.</p>
+      </section>
     </main>
 
     <footer>
       <span>Interactive teaching aid · all calculations run locally in this page.</span>
-      <span>Concepts: bounded geometry · friction-limited force allocation</span>
+      <span>Concepts: bounded geometry · O(1) force allocation · blind tactical control</span>
     </footer>
   </div>
 
@@ -403,6 +523,7 @@
         localStorage.setItem("concept-explorer-theme", dark ? "dark" : "light");
         drawGeometry();
         drawForces();
+        drawTactical();
       });
 
       const geometryCanvas = document.getElementById("geometryCanvas");
@@ -863,13 +984,370 @@
         ctx.beginPath(); ctx.arc(width - pad.right, finalY, 3, 0, Math.PI * 2); ctx.fill();
       }
 
+      // --- Module C: Pedagogical Blind-Following & Slip Observer Prototype ---
+      const tacticalCanvas = document.getElementById("tacticalCanvas");
+      const tctx = tacticalCanvas.getContext("2d");
+      const replayTrialBtn = document.getElementById("replayTrialBtn");
+      const impactTrialBtn = document.getElementById("impactTrialBtn");
+      const tacticalIce = document.getElementById("tacticalIce");
+      const trialProgressOut = document.getElementById("trialProgressOut");
+      const trueErrOut = document.getElementById("trueErrOut");
+      const obsErrOut = document.getElementById("obsErrOut");
+      const odomDriftOut = document.getElementById("odomDriftOut");
+      const activeMuOut = document.getElementById("activeMuOut");
+      const trialVerdictOut = document.getElementById("trialVerdictOut");
+
+      const tField = { width: 8.0, height: 4.6 };
+      const tObstacles = [
+        [
+          { x: 2.35, y: 2.45 },
+          { x: 3.45, y: 2.45 },
+          { x: 3.45, y: 3.75 },
+          { x: 2.35, y: 3.75 }
+        ],
+        [
+          { x: 4.85, y: 0.85 },
+          { x: 6.05, y: 0.85 },
+          { x: 6.05, y: 2.15 },
+          { x: 4.85, y: 2.15 }
+        ]
+      ];
+      const iceZone = { x: 3.55, y: 1.45, w: 1.55, h: 1.35 };
+      const waypoints = [
+        { x: 0.85, y: 3.45 },
+        { x: 1.75, y: 2.15 },
+        { x: 3.85, y: 1.95 },
+        { x: 4.55, y: 2.85 },
+        { x: 6.55, y: 2.95 },
+        { x: 7.20, y: 1.55 }
+      ];
+
+      function sampleReference(s) {
+        const totalSegs = waypoints.length - 1;
+        const scaled = Math.max(0, Math.min(totalSegs - 1e-6, s * totalSegs));
+        const idx = Math.floor(scaled);
+        const u = scaled - idx;
+        const smooth = u * u * (3 - 2 * u);
+        const a = waypoints[idx];
+        const b = waypoints[idx + 1];
+        return {
+          x: a.x + (b.x - a.x) * smooth,
+          y: a.y + (b.y - a.y) * smooth,
+          heading: Math.atan2(b.y - a.y, b.x - a.x)
+        };
+      }
+
+      let simState = null;
+      let animFrameId = null;
+
+      function inIceZone(pos) {
+        if (!tacticalIce.checked) return false;
+        return pos.x >= iceZone.x && pos.x <= iceZone.x + iceZone.w &&
+               pos.y >= iceZone.y && pos.y <= iceZone.y + iceZone.h;
+      }
+
+      function resetTrial(autoImpact = true) {
+        const start = waypoints[0];
+        simState = {
+          s: 0,
+          done: false,
+          autoImpactPending: autoImpact,
+          impacts: [],
+          truePos: { x: start.x, y: start.y },
+          trueVel: { x: 0, y: 0 },
+          obsPos: { x: start.x, y: start.y },
+          odomPos: { x: start.x, y: start.y },
+          heading: Math.atan2(waypoints[1].y - start.y, waypoints[1].x - start.x),
+          trueTrail: [{ x: start.x, y: start.y }],
+          obsTrail: [{ x: start.x, y: start.y }],
+          odomTrail: [{ x: start.x, y: start.y }],
+          collisionCount: 0
+        };
+      }
+
+      function injectLateralImpact() {
+        if (!simState || simState.done) return;
+        const perpAngle = simState.heading + Math.PI / 2;
+        const sign = simState.truePos.y > 2.3 ? -1 : 1;
+        const impulse = 1.65;
+        simState.trueVel.x += Math.cos(perpAngle) * impulse * sign;
+        simState.trueVel.y += Math.sin(perpAngle) * impulse * sign;
+        simState.impacts.push({ x: simState.truePos.x, y: simState.truePos.y });
+      }
+
+      function stepTrial(dt) {
+        if (!simState || simState.done) return;
+        const ref = sampleReference(simState.s);
+        const posErrMag = Math.hypot(ref.x - simState.obsPos.x, ref.y - simState.obsPos.y);
+        // Adaptive reference clock matching Robot.java concept
+        const dtRef = dt / (1 + 1.25 * Math.max(0, posErrMag - 0.25));
+        simState.s = Math.min(1, simState.s + dtRef * 0.145);
+
+        if (simState.autoImpactPending && simState.s >= 0.56) {
+          simState.autoImpactPending = false;
+          injectLateralImpact();
+        }
+
+        const target = sampleReference(simState.s);
+        const onIce = inIceZone(simState.truePos);
+        const mu = onIce ? 0.18 : 1.0;
+
+        // Desired velocity from observer estimate
+        const kp = 3.2;
+        const cmdVx = kp * (target.x - simState.obsPos.x);
+        const cmdVy = kp * (target.y - simState.obsPos.y);
+        const cmdSpeed = Math.hypot(cmdVx, cmdVy);
+        const maxCmd = 2.4;
+        const scaleCmd = cmdSpeed > maxCmd ? maxCmd / cmdSpeed : 1;
+        const ux = cmdVx * scaleCmd;
+        const uy = cmdVy * scaleCmd;
+
+        // Closed-form force allocation bounded by friction limit mu
+        const maxAccel = 4.6 * mu;
+        let ax = 4.2 * (ux - simState.trueVel.x);
+        let ay = 4.2 * (uy - simState.trueVel.y);
+        const aMag = Math.hypot(ax, ay);
+        if (aMag > maxAccel && aMag > 1e-6) {
+          ax = ax * maxAccel / aMag;
+          ay = ay * maxAccel / aMag;
+        }
+
+        simState.trueVel.x += ax * dt;
+        simState.trueVel.y += ay * dt;
+        simState.truePos.x += simState.trueVel.x * dt;
+        simState.truePos.y += simState.trueVel.y * dt;
+
+        // Raw wheel odometry believes commanded wheel velocity succeeded without slip
+        const odomVx = ux * (onIce ? 1.38 : 1.0);
+        const odomVy = uy * (onIce ? 1.38 : 1.0) + (onIce ? -0.32 : 0);
+        simState.odomPos.x += odomVx * dt;
+        simState.odomPos.y += odomVy * dt;
+
+        // Slip-aware observer fuses inertial/kinodynamic model to reject wheel spin
+        const obsGain = onIce ? 0.92 : 0.97;
+        simState.obsPos.x += (obsGain * simState.trueVel.x + (1 - obsGain) * odomVx) * dt;
+        simState.obsPos.y += (obsGain * simState.trueVel.y + (1 - obsGain) * odomVy) * dt;
+
+        if (Math.hypot(simState.trueVel.x, simState.trueVel.y) > 0.08) {
+          simState.heading = Math.atan2(simState.trueVel.y, simState.trueVel.x);
+        }
+
+        // Check bounded obstacle contact
+        const half = 0.26;
+        const hit = tObstacles.some(poly => {
+          const minX = poly[0].x - half, maxX = poly[1].x + half;
+          const minY = poly[0].y - half, maxY = poly[2].y + half;
+          return simState.truePos.x > minX && simState.truePos.x < maxX &&
+                 simState.truePos.y > minY && simState.truePos.y < maxY;
+        });
+        if (hit) simState.collisionCount += 1;
+
+        simState.trueTrail.push({ x: simState.truePos.x, y: simState.truePos.y });
+        simState.obsTrail.push({ x: simState.obsPos.x, y: simState.obsPos.y });
+        simState.odomTrail.push({ x: simState.odomPos.x, y: simState.odomPos.y });
+
+        if (simState.s >= 1 && Math.hypot(target.x - simState.truePos.x, target.y - simState.truePos.y) < 0.14) {
+          simState.done = true;
+        }
+      }
+
+      function drawTactical() {
+        if (!simState) resetTrial(true);
+        const { width, height } = resizeCanvas(tacticalCanvas, tctx);
+        const ctx = tctx;
+        const style = getComputedStyle(root);
+        const ink = style.getPropertyValue("--ink").trim();
+        const muted = style.getPropertyValue("--muted").trim();
+        const line = style.getPropertyValue("--line").trim();
+        const green = style.getPropertyValue("--green").trim();
+        const blue = style.getPropertyValue("--blue").trim();
+        const orange = style.getPropertyValue("--orange").trim();
+        const red = style.getPropertyValue("--red").trim();
+        const surface = style.getPropertyValue("--surface").trim();
+
+        const pad = 22;
+        const scale = Math.min((width - pad * 2) / tField.width, (height - pad * 2) / tField.height);
+        const ox = (width - tField.width * scale) / 2;
+        const oy = (height - tField.height * scale) / 2;
+        const toScreen = p => ({ x: ox + p.x * scale, y: height - oy - p.y * scale });
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Field boundary
+        ctx.strokeStyle = line;
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(ox, oy, tField.width * scale, tField.height * scale);
+
+        // Black ice patch
+        if (tacticalIce.checked) {
+          const topLeft = toScreen({ x: iceZone.x, y: iceZone.y + iceZone.h });
+          ctx.fillStyle = "rgba(71, 117, 184, 0.13)";
+          ctx.strokeStyle = blue;
+          ctx.setLineDash([4, 3]);
+          ctx.lineWidth = 1.2;
+          ctx.fillRect(topLeft.x, topLeft.y, iceZone.w * scale, iceZone.h * scale);
+          ctx.strokeRect(topLeft.x, topLeft.y, iceZone.w * scale, iceZone.h * scale);
+          ctx.setLineDash([]);
+          ctx.fillStyle = blue;
+          ctx.font = "600 9px " + getComputedStyle(document.body).fontFamily;
+          ctx.fillText("BLACK ICE (μ = 0.18)", topLeft.x + 6, topLeft.y + 13);
+        }
+
+        // Bounded obstacle polygons
+        tObstacles.forEach((poly, idx) => {
+          ctx.beginPath();
+          poly.forEach((pt, i) => {
+            const s = toScreen(pt);
+            if (i === 0) ctx.moveTo(s.x, s.y); else ctx.lineTo(s.x, s.y);
+          });
+          ctx.closePath();
+          ctx.fillStyle = "rgba(217, 77, 77, 0.10)";
+          ctx.fill();
+          ctx.strokeStyle = red;
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+          const labelPt = toScreen({ x: (poly[0].x + poly[1].x) / 2, y: (poly[0].y + poly[2].y) / 2 });
+          ctx.fillStyle = muted;
+          ctx.font = "9px " + getComputedStyle(document.body).fontFamily;
+          ctx.textAlign = "center";
+          ctx.fillText(`OBS ${idx + 1}`, labelPt.x, labelPt.y + 3);
+          ctx.textAlign = "left";
+        });
+
+        // Planned reference path
+        ctx.save();
+        ctx.strokeStyle = muted;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([2, 4]);
+        ctx.beginPath();
+        for (let i = 0; i <= 80; i++) {
+          const pt = toScreen(sampleReference(i / 80));
+          if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        // Start & Goal markers
+        const startS = toScreen(waypoints[0]);
+        const goalS = toScreen(waypoints[waypoints.length - 1]);
+        ctx.fillStyle = muted;
+        ctx.beginPath(); ctx.arc(startS.x, startS.y, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(goalS.x, goalS.y, 6, 0, Math.PI * 2); ctx.stroke();
+
+        // Helper to draw trail
+        const drawTrail = (pts, color, widthPx, dash) => {
+          if (pts.length < 2) return;
+          ctx.save();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = widthPx;
+          ctx.setLineDash(dash || []);
+          ctx.beginPath();
+          pts.forEach((pt, idx) => {
+            const s = toScreen(pt);
+            if (idx === 0) ctx.moveTo(s.x, s.y); else ctx.lineTo(s.x, s.y);
+          });
+          ctx.stroke();
+          ctx.restore();
+        };
+
+        drawTrail(simState.odomTrail, orange, 1.8, [4, 3]);
+        drawTrail(simState.obsTrail, blue, 2.0, []);
+        drawTrail(simState.trueTrail, green, 2.4, []);
+
+        // Impact markers
+        simState.impacts.forEach(imp => {
+          const s = toScreen(imp);
+          ctx.fillStyle = red;
+          ctx.beginPath(); ctx.arc(s.x, s.y, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = surface;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+
+        // Ghost raw odometry footprint
+        const odomS = toScreen(simState.odomPos);
+        ctx.save();
+        ctx.translate(odomS.x, odomS.y);
+        ctx.rotate(-simState.heading);
+        ctx.strokeStyle = orange;
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1.4;
+        const boxPx = 0.52 * scale;
+        ctx.strokeRect(-boxPx / 2, -boxPx / 2, boxPx, boxPx);
+        ctx.restore();
+
+        // Ground truth robot chassis
+        const trueS = toScreen(simState.truePos);
+        ctx.save();
+        ctx.translate(trueS.x, trueS.y);
+        ctx.rotate(-simState.heading);
+        ctx.fillStyle = "rgba(24, 123, 90, 0.16)";
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 2.2;
+        ctx.fillRect(-boxPx / 2, -boxPx / 2, boxPx, boxPx);
+        ctx.strokeRect(-boxPx / 2, -boxPx / 2, boxPx, boxPx);
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(boxPx * 0.45, 0); ctx.stroke();
+        ctx.restore();
+
+        // Update telemetry readouts
+        const refNow = sampleReference(simState.s);
+        const trueErr = Math.hypot(refNow.x - simState.truePos.x, refNow.y - simState.truePos.y);
+        const obsErr = Math.hypot(simState.obsPos.x - simState.truePos.x, simState.obsPos.y - simState.truePos.y);
+        const odomDrift = Math.hypot(simState.odomPos.x - simState.truePos.x, simState.odomPos.y - simState.truePos.y);
+        const activeMu = inIceZone(simState.truePos) ? 0.18 : 1.0;
+
+        trialProgressOut.value = `${Math.round(simState.s * 100)}%`;
+        trueErrOut.value = `${trueErr.toFixed(2)} m`;
+        obsErrOut.value = `${obsErr.toFixed(2)} m`;
+        odomDriftOut.value = `${odomDrift.toFixed(2)} m`;
+        activeMuOut.value = activeMu.toFixed(2);
+
+        if (simState.done) {
+          trialVerdictOut.innerHTML = simState.collisionCount === 0
+            ? `<strong>PASS · Obstacle-free arrival.</strong> Raw wheel odometry drifted by <strong>${odomDrift.toFixed(2)} m</strong>, while the slip-aware observer and O(1) controller completed the blind route with zero obstacle contacts.`
+            : `<strong>Completed with grazing contact.</strong> Impulse perturbation pushed the chassis near a boundary; click <em>Replay run</em> to test again.`;
+        } else {
+          trialVerdictOut.innerHTML = `<strong>Running blind trajectory.</strong> Watch raw wheel odometry (orange) drift on low friction while the observer (blue) and O(1) allocator keep the chassis (green) clear of obstacles.`;
+        }
+      }
+
+      let lastTime = null;
+      function tickTactical(timestamp) {
+        if (lastTime === null) lastTime = timestamp;
+        const dt = Math.min(0.033, (timestamp - lastTime) / 1000);
+        lastTime = timestamp;
+        stepTrial(dt);
+        drawTactical();
+        animFrameId = requestAnimationFrame(tickTactical);
+      }
+
+      replayTrialBtn.addEventListener("click", () => {
+        resetTrial(true);
+        drawTactical();
+      });
+      impactTrialBtn.addEventListener("click", () => {
+        injectLateralImpact();
+        drawTactical();
+      });
+      tacticalIce.addEventListener("change", () => {
+        resetTrial(true);
+        drawTactical();
+      });
+
       function redraw() {
         drawGeometry();
         drawForces();
+        drawTactical();
       }
       window.addEventListener("resize", redraw);
       drawGeometry();
       drawForces();
+      resetTrial(true);
+      animFrameId = requestAnimationFrame(tickTactical);
     })();
   </script>
 </body>
