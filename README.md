@@ -10,14 +10,14 @@
     <img src="https://img.shields.io/badge/OPEN_THE_INTERACTIVE_GUIDE-Launch_the_Visual_Demo-0969da?style=for-the-badge&logo=githubpages&logoColor=white" alt="Open the interactive concept guide"/>
   </a>
   <br/>
-  <sub><strong>A pedagogical, interactive visualization</strong> of bounded-line collision geometry and closed-form swerve force allocation.</sub>
+  <sub><strong>A pedagogical, interactive visualization</strong> of bounded-line collision geometry, closed-form swerve force allocation, and blind-following trajectories under black ice and lateral impacts.</sub>
   <br/>
   <sub>Page source: <a href="docs/index.html">docs/index.html</a></sub>
 </div>
 
 This repository documents three connected engineering capabilities: analytical obstacle geometry for AdvantageScope, a Python benchmark of a closed-form swerve-control kernel against ADMM-QP baselines, and a WPILib Java tactical simulation. Motivated by limited access to a physical FRC chassis and the lack of native obstacle collision handling in the visualization workflow, the project combines field mapping, kinodynamic control, and simulation telemetry. Current results are simulation-based; validation on a physical chassis is the next stage.
 
-**Pedagogical concept explorer.** The [interactive guide](https://mathiascar7.github.io/kinodynamic-swerve-simulation-control/) is a theoretical visual aid for understanding bounded-line collision geometry and closed-form swerve force allocation. It illustrates the concepts and is separate from the benchmark results reported below.
+**Pedagogical concept explorer.** The [interactive guide](https://mathiascar7.github.io/kinodynamic-swerve-simulation-control/) is a theoretical visual aid for understanding bounded-line collision geometry, closed-form swerve force allocation, and blind-following trajectories under black ice and lateral impacts. It is separate from the empirical Python benchmark and the WPILib/AdvantageScope stress-test logs reported in this README.
 
 <a href="https://mathiascar7.github.io/kinodynamic-swerve-simulation-control/"><img src="https://img.shields.io/badge/OPEN_THE_INTERACTIVE_GUIDE-Launch_the_Visual_Demo-0969da?style=for-the-badge&logo=githubpages&logoColor=white" alt="Open the interactive concept guide"/></a>
 
@@ -196,19 +196,63 @@ The horizon sweep in `04_realtime_latency_and_asymptotic_scaling.png` evaluates 
 
 ## 4. Part 3 — WPILib Tactical Stress Simulation & AdvantageScope
 
-The [Java simulator](03_wpilib_tactical_stress_tests/java_wpilib/Robot.java) uses WPILib `TimedRobot`, `Class2_Standard_72kg`, and the `ProposedO1SwerveController`. Its field is 16.54 m × 8.07 m; the inner control loop runs at 500 Hz with ten physical substeps per update at 5 kHz. Button `C` starts and stops randomized tactical trials. The scenario generator plans routes around calibrated obstacles and introduces traction changes, dynamic impacts, and field contacts. Pose, route, impact, and trial-state telemetry is published over NetworkTables for live inspection in AdvantageScope.
+### Architecture and engineering motivation
 
-### AdvantageScope telemetry guide
+AdvantageScope is a passive NetworkTables telemetry visualizer; it does not provide the rigid-body physics or obstacle-contact simulation used by these trials. Those responsibilities belong to the [WPILib Java simulator](03_wpilib_tactical_stress_tests/java_wpilib/Robot.java), which runs the `Class2_Standard_72kg` plant, the `ProposedO1SwerveController`, its own trajectory planner, and the collision and disturbance models. The simulated 20 ms WPILib frame is divided into ten 2 ms control updates (500 Hz); each update advances ten 0.2 ms physics substeps (5 kHz). The plant models Pacejka tire behavior and resolves obstacle contacts with continuous SAT collision checks. Stochastic mass, inertia, motor-health, measurement-noise, traction, and impact parameters make the blind-following episodes adversarial rather than clean trajectory replays.
+
+This WPILib/AdvantageScope stress suite is separate from Section 3's Python Monte Carlo benchmark: it has its own Java plant, controller execution, scenarios, and trial log. The simulator publishes ground truth, observer and wheel-odometry estimates, reference poses, planned routes, ice patches, contact markers, controller diagnostics, and trial verdicts through NetworkTables topics under `SmartDashboard/PathPlanner/` and `SmartDashboard/Control/`. In automated episodes the controller receives noisy simulated velocity, acceleration, wheel-speed, steering, and gyro measurements; no external vision pose update is fed into the controller.
+
+### Blind-following tactical stress protocol
+
+Each logged episode uses `Class2_Standard_72kg` on the 16.54 m × 8.07 m `2026 - Rebuilt Welded` field. Joystick button C or the Shuffleboard `Run Live Benchmark` toggle starts and stops the randomized trials. Random start, intermediate, and goal poses are used to generate a collision-checked L-shaped route around the calibrated, bounded-line obstacle map; the nominal safety margin is 0.26 m. `PlannedLPathVertices` records that route. The 585 logged planned routes are 11.158–23.468 m long. This is a planned path, not a guarantee that the robot completes it without contact under the applied disturbances.
+
+The automated episode generator combines:
+
+- **Blind tracking:** The robot follows the reference without external vision pose updates. `GhostPoseGlobal` is the reference, `RobotPose` is simulated ground truth, `EstimatedObserverPose` is the controller's slip-aware observer estimate, and `RawWheelOdometryPose` is the uncorrected wheel-odometry estimate. The wheel-only estimate is exposed to slip and impact-induced errors; the master summary does not, however, report a separate raw-odometry-versus-observer RMSE.
+- **Plant variation and sensor noise:** Actual mass and yaw inertia are independently scaled to 0.92–1.12 of nominal, and each motor-health factor is randomized over 0.82–1.00. Noisy measurements are sampled during each control update; the controller is not given the hidden ice map or external impact force.
+- **Localized traction loss:** Each trial places one or two black-ice patches on the route. Nominal friction is $\mu=0.84$; the randomized ice coefficient is $\mu=0.10$ in 199 trials and $\mu=0.18$ in 386 trials. The log contains 287 one-patch and 298 two-patch episodes.
+- **Dynamic impacts:** Two 20 ms sinusoidal impulse events are scheduled at randomized 26–34% and 64–74% fractions of the reference duration, for 1,170 generated robot-impact events over 585 trials. The randomized impact model uses an opposing mass of 0.60–1.30 times nominal robot mass, relative normal speed of 0.75–1.45 m/s, restitution of 0.25–0.55, and a randomized impact direction and lever arm.
+- **Obstacle and boundary contacts:** The plant applies continuous SAT-based contact resolution against the field boundary and mapped obstacles during the physics substeps. These contacts are logged separately from the scheduled dynamic impacts and may occur even when the reference route was collision-checked.
+
+### Recorded results and interpretation
+
+The authoritative per-trial log is [simulation_master_summary.txt](02_o1_blind_kinodynamic_controller/benchmark_data/simulation_master_summary.txt). It contains 585 trial records, all for `Class2_Standard_72kg` (trial IDs `#0001`–`#0585`). The table reports aggregates computed across those records; tracking errors are ground-truth robot position relative to the reference, not observer-estimation error.
+
+| Measure | Recorded result |
+|---|---:|
+| Trial verdicts | 568 `TIMEOUT_GRACE_REACHED` (97.1%); 14 `PASSED_WITH_DYNAMIC_IMPACTS`; 3 `PASSED_WITH_OBSTACLE_RECOVERY`; 0 clean passes |
+| Passed episodes | 17 / 585 (2.9%); final goal error 38.5–149.96 mm |
+| Ground-truth tracking RMSE | Mean 1,119.12 mm; median 945.90 mm; range 89.20–6,514.21 mm |
+| Final goal error | Mean 1,748.59 mm; median 1,146.74 mm; range 38.50–10,882.16 mm |
+| Peak error while on black ice | Mean 1,422.84 mm; maximum 10,882.17 mm |
+| Peak tracking error in impact-recovery windows | Mean 1,730.16 mm; maximum 10,876.99 mm |
+| Logged impacts and contacts | 3,077 total: 1,170 scheduled `DYNAMIC_ROBOT_IMPACT` events and 1,907 `FIELD_WALL_OR_OBSTACLE` contacts |
+| Impact-event recovery time | Mean 374.59 ms; median 450 ms; range 20–450 ms (the logger caps unresolved recovery windows at 450 ms) |
+| Combined tire-slip RMS | Mean 0.448; median 0.439; range 0.186–0.8757 |
+| Controller-step latency | Mean of per-trial means 3.10 μs; mean of per-trial p99 values 10.96 μs; largest per-trial p99 113.60 μs |
+| 500 Hz deadline misses | Mean per-trial rate 0.0024%; maximum per-trial rate 0.1131% against the 2,000 μs control period |
+| Grip-observer detection | Mean per-trial TPR 47.68%; FPR 20.62% |
+| Latest `LastTrialVerdict` | Trial `#0585`: `TIMEOUT_GRACE_REACHED` (final goal error 864.0 mm) |
+
+These are WPILib simulation results, not physical-robot validation. Across the logged 11.158–23.468 m routes, the controller receives no external global-pose corrections—no AprilTag, LiDAR, or vision pose updates—while it tracks through low-traction patches, noisy measurements, degraded motor health, and two dynamic impacts per trial whose randomized relative-normal-speed parameter reaches 1.45 m/s. This defines an observability limitation for blind dead-reckoning: wheel motion during unmodeled slip does not uniquely determine ground displacement, and inertial integration does not provide an absolute position reference, so global position error can accumulate without exteroceptive correction. If all four tire contacts saturate simultaneously, the ambiguity is more severe; however, the summary does not log per-wheel force saturation or establish that this condition occurred. The 568 `TIMEOUT_GRACE_REACHED` outcomes therefore cannot be attributed solely to this physical limitation, and the verdicts alone neither establish nor rule out numerical instability.
+
+The measured controller-step timings were low relative to the 2,000 μs period: 3.10 μs mean, 10.96 μs mean per-trial p99, and 0.0024% mean per-trial deadline misses. The grip observer's mean per-trial TPR was 47.68%. Seventeen trials (2.9%) reached the goal within 150 mm under the black-ice and impact protocol, including trials labeled `PASSED_WITH_DYNAMIC_IMPACTS` or `PASSED_WITH_OBSTACLE_RECOVERY`; this demonstrates successful arrivals in a subset, not reliable completion across the suite. The summary contains no formal numerical-divergence metric, so it does not support a zero-divergence claim. These blind runs motivate evaluating exteroceptive localization to close the global position loop; without a matched vision-enabled condition, they do not quantify when or how much AprilTag/vision fusion would improve completion.
+
+The master summary reports ground-truth tracking error, impact/contact metrics, combined tire slip, and grip-observer TPR/FPR. It does not provide separate quantitative error metrics for `RawWheelOdometryPose` versus `EstimatedObserverPose`. `Robot.java` writes per-trial `trial_####_live_trace.txt` files with `true_*`, `est_*`, and `odom_*` columns at runtime, but those trace files are not present in the repository snapshot; therefore no numerical odometry-versus-observer comparison is claimed here.
+
+### Logged telemetry and artifacts in AdvantageScope
+
+The following NetworkTables topics support live comparison of the simulated state, estimates, route, and stress events:
 
 | Topic/data | What it represents |
 |---|---|
-| `SmartDashboard/RobotPose` | Simulated robot pose. |
+| `SmartDashboard/RobotPose` | Simulated ground-truth robot pose. |
 | `SmartDashboard/PathPlanner/Trajectory` | Published trajectory poses. |
 | `SmartDashboard/PathPlanner/PlannedLPathVertices` | Planned route vertices. |
 | `SmartDashboard/PathPlanner/ActualTakenPathSummary` | Summary poses along the executed route. |
-| `SmartDashboard/PathPlanner/EstimatedObserverPose` | Estimated observer pose. |
-| `SmartDashboard/PathPlanner/RawWheelOdometryPose` | Wheel-odometry pose. |
-| `SmartDashboard/PathPlanner/GhostPoseGlobal` | Reference/ghost pose. |
+| `SmartDashboard/PathPlanner/EstimatedObserverPose` | Controller observer pose estimate. |
+| `SmartDashboard/PathPlanner/RawWheelOdometryPose` | Raw wheel-odometry pose estimate, published separately from the observer. |
+| `SmartDashboard/PathPlanner/GhostPoseGlobal` | Reference trajectory pose. |
 | `SmartDashboard/PathPlanner/StartPose` | Trial start pose. |
 | `SmartDashboard/PathPlanner/EndPose` | Trial goal pose. |
 | `SmartDashboard/PathPlanner/ImpactMarkers` | Impact/contact marker positions. |
@@ -217,8 +261,13 @@ The [Java simulator](03_wpilib_tactical_stress_tests/java_wpilib/Robot.java) use
 | `SmartDashboard/PathPlanner/BlackIceZones` | Simulated low-traction zone centers. |
 | `SmartDashboard/PathPlanner/BlackIcePolygonBounds` | Bounds for simulated low-traction regions. |
 | `SmartDashboard/PathPlanner/LastTrialVerdict` | Outcome label for the latest trial. |
+| `SmartDashboard/Control/TrackingError_mm` | Ground-truth position tracking error. |
+| `SmartDashboard/Control/StepLatency_us` | Measured controller-step execution time. |
+| `SmartDashboard/Control/CombinedTireSlip` | Combined tire-slip diagnostic. |
+| `SmartDashboard/Control/EstimatedMuHat` / `TrueLocalMu` | Estimated and simulated local friction coefficients. |
+| `SmartDashboard/Control/InCollision` / `InBlackIceTrip` | Current contact and low-traction flags. |
 
-The active obstacle geometry is loaded from [the calibrated map](01_analytical_obstacle_mapping/maps/map_obstacles_calibrated.txt) and filtered for the selected field layout.
+The active obstacle geometry is loaded from [the calibrated map](01_analytical_obstacle_mapping/maps/map_obstacles_calibrated.txt) and filtered for the selected field layout. The master summary and runtime traces are written under `02_o1_blind_kinodynamic_controller/benchmark_data/` when the simulator runs. The six images below are committed visual snapshots at [docs/images/advantagescope_trials/](docs/images/advantagescope_trials/); they illustrate the field and telemetry views, not six additional statistical trials.
 
 ### AdvantageScope trial snapshots
 
