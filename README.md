@@ -5,9 +5,19 @@
 ![SE(2) plant](https://img.shields.io/badge/Plant-SE(2)%20%2B%20wheel%20states-5b8)
 ![Analytical control](https://img.shields.io/badge/Control-analytic%20kernel%20benchmark-6a5acd)
 
+<div align="center">
+  <a href="https://mathiascar7.github.io/kinodynamic-swerve-simulation-control/">
+    <img src="https://img.shields.io/badge/OPEN_THE_INTERACTIVE_GUIDE-Explore_the_Concepts-187b5a?style=for-the-badge&logo=githubpages&logoColor=white" alt="Open the interactive concept guide"/>
+  </a>
+  <br/>
+  <sub><strong>A pedagogical, interactive visualization</strong> of bounded-line collision geometry and closed-form swerve force allocation.</sub>
+  <br/>
+  <sub>Page source: <a href="docs/index.html">docs/index.html</a></sub>
+</div>
+
 This repository documents three connected engineering capabilities: analytical obstacle geometry for AdvantageScope, a Python benchmark of a closed-form swerve-control kernel against ADMM-QP baselines, and a WPILib Java tactical simulation. Motivated by limited access to a physical FRC chassis and the lack of native obstacle collision handling in the visualization workflow, the project combines field mapping, kinodynamic control, and simulation telemetry. Current results are simulation-based; validation on a physical chassis is the next stage.
 
-**Pedagogical concept explorer.** The [interactive guide](docs/index.html) is a theoretical visual aid for understanding bounded-line collision geometry and closed-form swerve force allocation. It illustrates the concepts and is separate from the benchmark results reported below.
+**Pedagogical concept explorer.** The [interactive guide](https://mathiascar7.github.io/kinodynamic-swerve-simulation-control/) is a theoretical visual aid for understanding bounded-line collision geometry and closed-form swerve force allocation. It illustrates the concepts and is separate from the benchmark results reported below.
 
 The benchmark evaluates a modeled 72 kg FRC-class robot alongside 32 kg and 145 kg platforms, providing a simulation basis for assessing controller behavior across vehicle scales and informing future AMR hardware studies.
 
@@ -128,7 +138,7 @@ $$
 {1+1.25\max(0,e_{\mathrm{pos,est}}-0.30)}.
 $$
 
-The [interactive concept explorer](docs/index.html) provides a pedagogical visualization of the bounded-line geometry and the force decomposition described above. It is a theoretical illustration for understanding the model, not an additional benchmark or experimental result.
+The [interactive concept explorer](https://mathiascar7.github.io/kinodynamic-swerve-simulation-control/) provides a pedagogical visualization of the bounded-line geometry and the force decomposition described above. It is a theoretical illustration for understanding the model, not an additional benchmark or experimental result.
 
 ### Quantitative benchmark results
 
