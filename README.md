@@ -7,6 +7,8 @@
 
 This repository documents three connected engineering capabilities: analytical obstacle geometry for AdvantageScope, a Python benchmark of a closed-form swerve-control kernel against ADMM-QP baselines, and a WPILib Java tactical simulation. Motivated by limited access to a physical FRC chassis and the lack of native obstacle collision handling in the visualization workflow, the project combines field mapping, kinodynamic control, and simulation telemetry. Current results are simulation-based; validation on a physical chassis is the next stage.
 
+**Pedagogical concept explorer.** The [interactive guide](docs/index.html) is a theoretical visual aid for understanding bounded-line collision geometry and closed-form swerve force allocation. It illustrates the concepts and is separate from the benchmark results reported below.
+
 The benchmark evaluates a modeled 72 kg FRC-class robot alongside 32 kg and 145 kg platforms, providing a simulation basis for assessing controller behavior across vehicle scales and informing future AMR hardware studies.
 
 ## 1. End-to-End System Architecture
@@ -125,6 +127,8 @@ $$
 \frac{\Delta t_{\mathrm{control}}}
 {1+1.25\max(0,e_{\mathrm{pos,est}}-0.30)}.
 $$
+
+The [interactive concept explorer](docs/index.html) provides a pedagogical visualization of the bounded-line geometry and the force decomposition described above. It is a theoretical illustration for understanding the model, not an additional benchmark or experimental result.
 
 ### Quantitative benchmark results
 
